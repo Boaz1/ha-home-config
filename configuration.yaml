@@ -1,0 +1,285 @@
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+mqtt:
+  number:
+    # ============================================================================
+    # MQTT Number Entities for Birb CO2 Display
+    # ============================================================================
+    - name: "Birb CO2 Display"
+      unique_id: birb_co2_set
+      command_topic: "birb/co2/set"
+      state_topic: "birb/co2/state"
+      min: 420
+      max: 2400
+      step: 1
+      mode: slider
+      optimistic: true
+      retain: true
+      
+    - name: "Birb Home CO2 Display"
+      unique_id: birb_home_co2_set
+      command_topic: "birb/co2/Birb-7F98A4/set"
+      state_topic: "birb/co2/Birb-7F98A4/state"
+      min: 420
+      max: 2400
+      step: 1
+      mode: slider
+      optimistic: true
+      retain: true
+
+  binary_sensor:
+    # ============================================================================
+    # Aranet Pro Base Station Availability Sensor
+    # ============================================================================
+    - name: "Aranet Pro Base Station"
+      unique_id: aranet_base_364190009546_online
+      state_topic: "AranetBaseFlow/364190009546/online"
+      payload_on: "true"
+      payload_off: "false"
+      device_class: connectivity
+      icon: mdi:access-point
+
+
+  sensor:
+    # ============================================================================
+    # SENSOR 1 - Update sensor_id and sensor_name for your first Aranet4 sensor
+    # ============================================================================
+
+    # Configuration variables for easy customization
+    # sensor_id: 407C0D
+    # sensor_name: 407C0D
+    # base_station_id: 364190009546
+
+    # CO2 Sensor
+    - name: "Aranet4 407C0D CO2"
+      unique_id: aranet4_407C0D_co2
+      state_topic: "AranetBaseFlow/364190009546/sensors/407C0D/measurements/co2"
+      unit_of_measurement: "ppm"
+      device_class: carbon_dioxide
+      state_class: measurement
+      icon: mdi:molecule-co2
+      device:
+        identifiers: ["aranet4_407C0D"]
+        name: "Aranet4 407C0D"
+        manufacturer: "SAF Tehnika"
+        model: "Aranet4"
+
+    # Temperature Sensor
+    - name: "Aranet4 407C0D Temperature"
+      unique_id: aranet4_407C0D_temperature
+      state_topic: "AranetBaseFlow/364190009546/sensors/407C0D/measurements/temperature"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      icon: mdi:thermometer
+      device:
+        identifiers: ["aranet4_407C0D"]
+        name: "Aranet4 407C0D"
+        manufacturer: "SAF Tehnika"
+        model: "Aranet4"
+
+    # Humidity Sensor
+    - name: "Aranet4 407C0D Humidity"
+      unique_id: aranet4_407C0D_humidity
+      state_topic: "AranetBaseFlow/364190009546/sensors/407C0D/measurements/humidity"
+      unit_of_measurement: "%"
+      device_class: humidity
+      state_class: measurement
+      icon: mdi:water-percent
+      device:
+        identifiers: ["aranet4_407C0D"]
+        name: "Aranet4 407C0D"
+        manufacturer: "SAF Tehnika"
+        model: "Aranet4"
+
+    # Atmospheric Pressure Sensor (converted to hPa)
+    - name: "Aranet4 407C0D Pressure"
+      unique_id: aranet4_407C0D_pressure
+      state_topic: "AranetBaseFlow/364190009546/sensors/407C0D/measurements/atmosphericpressure"
+      unit_of_measurement: "hPa"
+      device_class: atmospheric_pressure
+      state_class: measurement
+      icon: mdi:gauge
+      value_template: "{{ (value | float / 100) | round(1) }}"
+      device:
+        identifiers: ["aranet4_407C0D"]
+        name: "Aranet4 407C0D"
+        manufacturer: "SAF Tehnika"
+        model: "Aranet4"
+
+    # Battery Level Sensor (converted to percentage)
+    - name: "Aranet4 407C0D Battery"
+      unique_id: aranet4_407C0D_battery
+      state_topic: "AranetBaseFlow/364190009546/sensors/407C0D/measurements/battery"
+      unit_of_measurement: "%"
+      device_class: battery
+      state_class: measurement
+      icon: mdi:battery
+      value_template: "{{ (value | float * 100) | round(0) }}"
+      device:
+        identifiers: ["aranet4_407C0D"]
+        name: "Aranet4 407C0D"
+        manufacturer: "SAF Tehnika"
+        model: "Aranet4"
+
+    # Signal Strength Sensor
+    - name: "Aranet4 407C0D Signal"
+      unique_id: aranet4_407C0D_rssi
+      state_topic: "AranetBaseFlow/364190009546/sensors/407C0D/measurements/rssi"
+      unit_of_measurement: "dBm"
+      device_class: signal_strength
+      state_class: measurement
+      icon: mdi:wifi-strength-2
+      device:
+        identifiers: ["aranet4_407C0D"]
+        name: "Aranet4 407C0D"
+        manufacturer: "SAF Tehnika"
+        model: "Aranet4"
+
+    # Last Update Timestamp
+    - name: "Aranet4 407C0D Last Update"
+      unique_id: aranet4_407C0D_timestamp
+      state_topic: "AranetBaseFlow/364190009546/sensors/407C0D/measurements/time"
+      device_class: timestamp
+      icon: mdi:clock-outline
+      value_template: "{{ value | int | timestamp_local }}"
+      device:
+        identifiers: ["aranet4_407C0D"]
+        name: "Aranet4 407C0D"
+        manufacturer: "SAF Tehnika"
+        model: "Aranet4"
+
+    # ============================================================================
+    # Birb Sensors
+    # ============================================================================
+    - name: "Birb 7F98A4 Servo Position"
+      state_topic: "birb/sensor/Birb-7F98A4/Birb-7F98A4_servo_position/state"
+      unit_of_measurement: "°"
+    - name: "Birb 7F98A4 Battery"
+      state_topic: "birb/sensor/Birb-7F98A4/Birb-7F98A4_battery/state"
+      unit_of_measurement: "%"
+    - name: "Birb 7F98A4 Battery Voltage"
+      state_topic: "birb/sensor/Birb-7F98A4/Birb-7F98A4_battery_voltage/state"
+      unit_of_measurement: "V"
+
+    - name: "Birb 8A278C Servo Position"
+      state_topic: "birb/sensor/Birb-8A278C/Birb-8A278C_servo_position/state"
+      unit_of_measurement: "°"
+    - name: "Birb 8A278C Battery"
+      state_topic: "birb/sensor/Birb-8A278C/Birb-8A278C_battery/state"
+      unit_of_measurement: "%"
+    - name: "Birb 8A278C Battery Voltage"
+      state_topic: "birb/sensor/Birb-8A278C/Birb-8A278C_battery_voltage/state"
+      unit_of_measurement: "V"
+      
+    - name: "Birb 610990 Servo Position"
+      state_topic: "birb/sensor/Birb-610990/Birb-610990_servo_position/state"
+      unit_of_measurement: "°"
+    - name: "Birb 610990 Battery"
+      state_topic: "birb/sensor/Birb-610990/Birb-610990_battery/state"
+      unit_of_measurement: "%"
+    - name: "Birb 610990 Battery Voltage"
+      state_topic: "birb/sensor/Birb-610990/Birb-610990_battery_voltage/state"
+      unit_of_measurement: "V"
+   
+    # ============================================================================
+    # lcrelay-8a23d8 Sensors and Switches
+    # ============================================================================
+    # DS18B20 Sensor 1
+    - name: "lcrelay 8a23d8 DS18B20 Sensor 1"
+      unique_id: "lcrelay_8a23d8_ds18b20_sensor_1"
+      state_topic: "lcrelay-8a23d8/sensor/ds18b20_sensor_1/state"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      device:
+        identifiers: lcrelay_8a23d8
+        name: "lcrelay 8a23d8"
+        model: "lcrelay_8a23d8 via MQTT"
+
+    # Connected SSID (text sensor as regular sensor)
+    - name: "lcrelay 8a23d8 Connected SSID"
+      unique_id: "lcrelay_8a23d8_connected_ssid"
+      state_topic: "lcrelay-8a23d8/sensor/lcrelay_connected_ssid/state"
+      device:
+        identifiers: lcrelay_8a23d8
+
+    # RSSi
+    - name: "lcrelay 8a23d8 Wifi Signal"
+      unique_id: "lcrelay_8a23d8_wifi_signal"
+      state_topic: "lcrelay-8a23d8/sensor/lcrelay_wifi_signal/state"
+      device:
+        identifiers: lcrelay_8a23d8
+        
+  switch:
+    # Relay 1
+    - name: "lcrelay 8a23d8 Relay 1"
+      unique_id: "lcrelay_8a23d8_relay_1"
+      state_topic: "lcrelay-8a23d8/switch/lcrelay_relay_1/state"
+      command_topic: "lcrelay-8a23d8/switch/lcrelay_relay_1/command"
+      payload_on: "ON"
+      payload_off: "OFF"
+      state_on: "ON"
+      state_off: "OFF"
+      device:
+        identifiers: lcrelay_8a23d8
+        name: "lcrelay 8a23d8"
+        model: "lcrelay_8a23d8 via MQTT"
+    # Relay 2
+    - name: "lcrelay 8a23d8 Relay 2"
+      unique_id: "lcrelay_8a23d8_relay_2"
+      state_topic: "lcrelay-8a23d8/switch/lcrelay_relay_2/state"
+      command_topic: "lcrelay-8a23d8/switch/lcrelay_relay_2/command"
+      payload_on: "ON"
+      payload_off: "OFF"
+      state_on: "ON"
+      state_off: "OFF"
+      device:
+        identifiers: lcrelay_8a23d8
+
+    # Relay 3
+    - name: "lcrelay 8a23d8 Relay 3"
+      unique_id: "lcrelay_8a23d8_relay_3"
+      state_topic: "lcrelay-8a23d8/switch/lcrelay_relay_3/state"
+      command_topic: "lcrelay-8a23d8/switch/lcrelay_relay_3/command"
+      payload_on: "ON"
+      payload_off: "OFF"
+      state_on: "ON"
+      state_off: "OFF"
+      device:
+        identifiers: lcrelay_8a23d8
+
+    # Relay 4
+    - name: "lcrelay 8a23d8 Relay 4"
+      unique_id: "lcrelay_8a23d8_relay_4"
+      state_topic: "lcrelay-8a23d8/switch/lcrelay_relay_4/state"
+      command_topic: "lcrelay-8a23d8/switch/lcrelay_relay_4/command"
+      payload_on: "ON"
+      payload_off: "OFF"
+      state_on: "ON"
+      state_off: "OFF"
+      device:
+        identifiers: lcrelay_8a23d8
+
+
+sensor:
+  - platform: filter
+    name: "Aranet CO2 3min Avg (Filter)"
+    # entity_id: sensor.aranet4_boaz_2bfd5_carbon_dioxide
+    # entity_id: sensor.birb_co2_set
+    entity_id: sensor.birb_co2_sensor
+    filters:
+      - filter: time_simple_moving_average
+        window_size: "00:01:00" 
+        precision: 0
+

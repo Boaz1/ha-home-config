@@ -1,0 +1,31 @@
+# Home Assistant .gitignore
+# Whitelist approach: ignore everything, then explicitly include what we want to track
+
+# Ignore everything by default
+*
+!*/
+
+# Include common configuration files you manually edit
+!.gitignore
+!.gitattributes
+!configuration.yaml
+!automations.yaml
+!scripts.yaml
+!scenes.yaml
+!groups.yaml
+!customize.yaml
+
+# Include packages directory (recursive)
+!packages/
+!packages/**
+
+# Include blueprints directory (recursive)
+!blueprints/
+!blueprints/**
+
+# Include custom components (optional - uncomment if you develop/maintain your own)
+# !custom_components/
+# !custom_components/**
+
+# Always exclude secrets even if matched above
+secrets.yaml

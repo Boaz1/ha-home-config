@@ -1,0 +1,93 @@
+- id: '1763642941551'
+  alias: CO2
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - sensor.aranet4_07c99_aquarium_aranet4_07c99_aquarium_co2
+  conditions:
+  - condition: template
+    value_template: '{{ trigger.to_state.state not in [''unknown'', ''unavailable'']
+      }}'
+  actions:
+  - action: number.set_value
+    target:
+      entity_id: number.birb_co2_display
+    data:
+      value: '{{ trigger.to_state.state | float }}'
+  mode: single
+- id: '1764929811365'
+  alias: UV on
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - number.birb_co2_display
+    above: 850
+  conditions: []
+  actions:
+  - type: turn_on
+    device_id: 512b03c60fadc08f41b58840635caad0
+    entity_id: a81615a2a6018728d03bf934552180b1
+    domain: switch
+  mode: single
+- id: '1764929974602'
+  alias: UV off
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - number.birb_co2_display
+    below: 750
+  conditions: []
+  actions:
+  - type: turn_off
+    device_id: 512b03c60fadc08f41b58840635caad0
+    entity_id: a81615a2a6018728d03bf934552180b1
+    domain: switch
+  mode: single
+- id: '1765060726911'
+  alias: CO2 800 lcrelay 1 on
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - number.birb_co2_display
+    above: 800
+  conditions: []
+  actions:
+  - type: turn_on
+    device_id: a58ba31a95927fe2344053eda4fdc798
+    entity_id: a4d62317890a78e136703d8828bf9db7
+    domain: switch
+  mode: single
+- id: '1765061147628'
+  alias: CO2 UV lcrelay 1
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - number.birb_co2_display
+    below: 700
+  conditions: []
+  actions:
+  - type: turn_off
+    device_id: a58ba31a95927fe2344053eda4fdc798
+    entity_id: a4d62317890a78e136703d8828bf9db7
+    domain: switch
+  mode: single
+- id: '1765228312412'
+  alias: Set home CO2
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - sensor.aranet4_boaz_2bfd5_carbon_dioxide
+  conditions: []
+  actions:
+  - action: number.set_value
+    metadata: {}
+    data: {}
+    target:
+      entity_id: number.birb_home_co2_display
+  mode: single
