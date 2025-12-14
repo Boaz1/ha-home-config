@@ -52,9 +52,9 @@ mqtt:
     # ============================================================================
     # lcrelay Device Online/Offline Status
     # ============================================================================
-    - name: "Aquarium Relay Status"
+    - name: "Aquarium fffe8a Relay Status"
       unique_id: "lcrelay_fffe8a_status"
-      state_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      state_topic: "flow/aquarium/lcrelay/fffe8a/availability"
       payload_on: "online"
       payload_off: "offline"
       device_class: connectivity
@@ -208,10 +208,10 @@ mqtt:
     # lcrelay-fffe8a Sensors
     # ============================================================================
     # Temperature Sensor
-    - name: "Aquarium Temperature"
+    - name: "Aquarium fffe8a Temperature"
       unique_id: "lcrelay_fffe8a_temperature"
-      state_topic: "schule/aquarium/lcrelay/fffe8a/telemetry/temperature"
-      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      state_topic: "flow/aquarium/lcrelay/fffe8a/telemetry/temperature"
+      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
       payload_available: "online"
       payload_not_available: "offline"
       unit_of_measurement: "°C"
@@ -221,10 +221,10 @@ mqtt:
       icon: mdi:thermometer
 
     # WiFi Signal Strength
-    - name: "Aquarium Relay WiFi RSSI"
+    - name: "Aquarium fffe8a Relay WiFi RSSI"
       unique_id: "lcrelay_fffe8a_wifi_rssi"
-      state_topic: "schule/aquarium/lcrelay/fffe8a/telemetry/wifi_rssi"
-      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      state_topic: "flow/aquarium/lcrelay/fffe8a/telemetry/wifi_rssi"
+      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
       payload_available: "online"
       payload_not_available: "offline"
       unit_of_measurement: "dBm"
@@ -234,20 +234,20 @@ mqtt:
       icon: mdi:wifi
 
     # WiFi SSID
-    - name: "Aquarium Relay WiFi Network"
+    - name: "Aquarium fffe8a Relay WiFi Network"
       unique_id: "lcrelay_fffe8a_wifi_ssid"
-      state_topic: "schule/aquarium/lcrelay/fffe8a/telemetry/wifi_ssid"
-      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      state_topic: "flow/aquarium/lcrelay/fffe8a/telemetry/wifi_ssid"
+      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
       payload_available: "online"
       payload_not_available: "offline"
       qos: 0
       icon: mdi:access-point-network
 
     # IP Address
-    - name: "Aquarium Relay IP Address"
+    - name: "Aquarium fffe8a Relay IP Address"
       unique_id: "lcrelay_fffe8a_ip_address"
-      state_topic: "schule/aquarium/lcrelay/fffe8a/telemetry/ip_address"
-      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      state_topic: "flow/aquarium/lcrelay/fffe8a/telemetry/ip_address"
+      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
       payload_available: "online"
       payload_not_available: "offline"
       qos: 0
@@ -258,10 +258,10 @@ mqtt:
     # ============================================================================
 
     # Free Heap Memory
-    - name: "Aquarium Relay Heap Free"
+    - name: "Aquarium fffe8a Relay Heap Free"
       unique_id: "lcrelay_fffe8a_heap_free"
-      state_topic: "schule/aquarium/lcrelay/fffe8a/diagnostics/heap_free"
-      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      state_topic: "flow/aquarium/lcrelay/fffe8a/diagnostics/heap_free"
+      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
       payload_available: "online"
       payload_not_available: "offline"
       device_class: data_size
@@ -273,10 +273,10 @@ mqtt:
       unit_of_measurement: "kB"
 
     # Minimum Free Heap
-    - name: "Aquarium Relay Heap Min"
+    - name: "Aquarium fffe8a Relay Heap Min"
       unique_id: "lcrelay_fffe8a_heap_min"
-      state_topic: "schule/aquarium/lcrelay/fffe8a/diagnostics/heap_min"
-      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      state_topic: "flow/aquarium/lcrelay/fffe8a/diagnostics/heap_min"
+      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
       payload_available: "online"
       payload_not_available: "offline"
       device_class: data_size
@@ -287,10 +287,10 @@ mqtt:
       unit_of_measurement: "kB"
 
     # Largest Free Block
-    - name: "Aquarium Relay Heap Largest"
+    - name: "Aquarium fffe8a Relay Heap Largest"
       unique_id: "lcrelay_fffe8a_heap_largest"
-      state_topic: "schule/aquarium/lcrelay/fffe8a/diagnostics/heap_largest"
-      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      state_topic: "flow/aquarium/lcrelay/fffe8a/diagnostics/heap_largest"
+      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
       payload_available: "online"
       payload_not_available: "offline"
       device_class: data_size
@@ -301,10 +301,10 @@ mqtt:
       unit_of_measurement: "kB"
 
     # System Uptime
-    - name: "Aquarium Relay Uptime"
+    - name: "Aquarium fffe8a Relay Uptime"
       unique_id: "lcrelay_fffe8a_uptime"
-      state_topic: "schule/aquarium/lcrelay/fffe8a/diagnostics/uptime"
-      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      state_topic: "flow/aquarium/lcrelay/fffe8a/diagnostics/uptime"
+      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
       payload_available: "online"
       payload_not_available: "offline"
       unit_of_measurement: "s"
@@ -327,10 +327,10 @@ mqtt:
         {% endif %}
 
     # WiFi Uptime
-    - name: "Aquarium Relay WiFi Uptime"
+    - name: "Aquarium fffe8a Relay WiFi Uptime"
       unique_id: "lcrelay_fffe8a_wifi_uptime"
-      state_topic: "schule/aquarium/lcrelay/fffe8a/diagnostics/wifi_uptime"
-      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      state_topic: "flow/aquarium/lcrelay/fffe8a/diagnostics/wifi_uptime"
+      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
       payload_available: "online"
       payload_not_available: "offline"
       unit_of_measurement: "s"
@@ -349,10 +349,10 @@ mqtt:
         {% endif %}
 
     # MQTT Uptime
-    - name: "Aquarium Relay MQTT Uptime"
+    - name: "Aquarium fffe8a Relay MQTT Uptime"
       unique_id: "lcrelay_fffe8a_mqtt_uptime"
-      state_topic: "schule/aquarium/lcrelay/fffe8a/diagnostics/mqtt_uptime"
-      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      state_topic: "flow/aquarium/lcrelay/fffe8a/diagnostics/mqtt_uptime"
+      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
       payload_available: "online"
       payload_not_available: "offline"
       unit_of_measurement: "s"
@@ -376,11 +376,11 @@ mqtt:
 
   switch:
     # Relay 1
-    - name: "Aquarium Relay 1"
+    - name: "Aquarium fffe8a Relay 1"
       unique_id: "lcrelay_fffe8a_relay1"
-      state_topic: "schule/aquarium/lcrelay/fffe8a/state/relay1"
-      command_topic: "schule/aquarium/lcrelay/fffe8a/command/relay1"
-      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      state_topic: "flow/aquarium/lcrelay/fffe8a/state/relay1"
+      command_topic: "flow/aquarium/lcrelay/fffe8a/command/relay1"
+      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
       payload_on: "ON"
       payload_off: "OFF"
       payload_available: "online"
@@ -393,11 +393,11 @@ mqtt:
       icon: mdi:electric-switch
 
     # Relay 2
-    - name: "Aquarium Relay 2"
+    - name: "Aquarium fffe8a Relay 2"
       unique_id: "lcrelay_fffe8a_relay2"
-      state_topic: "schule/aquarium/lcrelay/fffe8a/state/relay2"
-      command_topic: "schule/aquarium/lcrelay/fffe8a/command/relay2"
-      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      state_topic: "flow/aquarium/lcrelay/fffe8a/state/relay2"
+      command_topic: "flow/aquarium/lcrelay/fffe8a/command/relay2"
+      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
       payload_on: "ON"
       payload_off: "OFF"
       payload_available: "online"
@@ -410,11 +410,11 @@ mqtt:
       icon: mdi:electric-switch
 
     # Relay 3
-    - name: "Aquarium Relay 3"
+    - name: "Aquarium fffe8a Relay 3"
       unique_id: "lcrelay_fffe8a_relay3"
-      state_topic: "schule/aquarium/lcrelay/fffe8a/state/relay3"
-      command_topic: "schule/aquarium/lcrelay/fffe8a/command/relay3"
-      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      state_topic: "flow/aquarium/lcrelay/fffe8a/state/relay3"
+      command_topic: "flow/aquarium/lcrelay/fffe8a/command/relay3"
+      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
       payload_on: "ON"
       payload_off: "OFF"
       payload_available: "online"
@@ -427,11 +427,11 @@ mqtt:
       icon: mdi:electric-switch
 
     # Relay 4
-    - name: "Aquarium Relay 4"
+    - name: "Aquarium fffe8a Relay 4"
       unique_id: "lcrelay_fffe8a_relay4"
-      state_topic: "schule/aquarium/lcrelay/fffe8a/state/relay4"
-      command_topic: "schule/aquarium/lcrelay/fffe8a/command/relay4"
-      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      state_topic: "flow/aquarium/lcrelay/fffe8a/state/relay4"
+      command_topic: "flow/aquarium/lcrelay/fffe8a/command/relay4"
+      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
       payload_on: "ON"
       payload_off: "OFF"
       payload_available: "online"
