@@ -49,6 +49,18 @@ mqtt:
       device_class: connectivity
       icon: mdi:access-point
 
+    # ============================================================================
+    # lcrelay Device Online/Offline Status
+    # ============================================================================
+    - name: "Aquarium Relay Status"
+      unique_id: "lcrelay_fffe8a_status"
+      state_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      payload_on: "online"
+      payload_off: "offline"
+      device_class: connectivity
+      qos: 1
+      icon: mdi:lan-connect
+
 
   sensor:
     # ============================================================================
@@ -193,84 +205,243 @@ mqtt:
       unit_of_measurement: "V"
    
     # ============================================================================
-    # lcrelay-8a23d8 Sensors and Switches
+    # lcrelay-fffe8a Sensors
     # ============================================================================
-    # DS18B20 Sensor 1
-    - name: "lcrelay 8a23d8 DS18B20 Sensor 1"
-      unique_id: "lcrelay_8a23d8_ds18b20_sensor_1"
-      state_topic: "lcrelay-8a23d8/sensor/ds18b20_sensor_1/state"
+    # Temperature Sensor
+    - name: "Aquarium Temperature"
+      unique_id: "lcrelay_fffe8a_temperature"
+      state_topic: "schule/aquarium/lcrelay/fffe8a/telemetry/temperature"
+      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      payload_available: "online"
+      payload_not_available: "offline"
       unit_of_measurement: "°C"
       device_class: temperature
       state_class: measurement
-      device:
-        identifiers: lcrelay_8a23d8
-        name: "lcrelay 8a23d8"
-        model: "lcrelay_8a23d8 via MQTT"
+      qos: 0
+      icon: mdi:thermometer
 
-    # Connected SSID (text sensor as regular sensor)
-    - name: "lcrelay 8a23d8 Connected SSID"
-      unique_id: "lcrelay_8a23d8_connected_ssid"
-      state_topic: "lcrelay-8a23d8/sensor/lcrelay_connected_ssid/state"
-      device:
-        identifiers: lcrelay_8a23d8
+    # WiFi Signal Strength
+    - name: "Aquarium Relay WiFi RSSI"
+      unique_id: "lcrelay_fffe8a_wifi_rssi"
+      state_topic: "schule/aquarium/lcrelay/fffe8a/telemetry/wifi_rssi"
+      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      payload_available: "online"
+      payload_not_available: "offline"
+      unit_of_measurement: "dBm"
+      device_class: signal_strength
+      state_class: measurement
+      qos: 0
+      icon: mdi:wifi
 
-    # RSSi
-    - name: "lcrelay 8a23d8 Wifi Signal"
-      unique_id: "lcrelay_8a23d8_wifi_signal"
-      state_topic: "lcrelay-8a23d8/sensor/lcrelay_wifi_signal/state"
-      device:
-        identifiers: lcrelay_8a23d8
-        
+    # WiFi SSID
+    - name: "Aquarium Relay WiFi Network"
+      unique_id: "lcrelay_fffe8a_wifi_ssid"
+      state_topic: "schule/aquarium/lcrelay/fffe8a/telemetry/wifi_ssid"
+      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      payload_available: "online"
+      payload_not_available: "offline"
+      qos: 0
+      icon: mdi:access-point-network
+
+    # IP Address
+    - name: "Aquarium Relay IP Address"
+      unique_id: "lcrelay_fffe8a_ip_address"
+      state_topic: "schule/aquarium/lcrelay/fffe8a/telemetry/ip_address"
+      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      payload_available: "online"
+      payload_not_available: "offline"
+      qos: 0
+      icon: mdi:ip-network
+
+    # ============================================================================
+    # Sensors - Diagnostics
+    # ============================================================================
+
+    # Free Heap Memory
+    - name: "Aquarium Relay Heap Free"
+      unique_id: "lcrelay_fffe8a_heap_free"
+      state_topic: "schule/aquarium/lcrelay/fffe8a/diagnostics/heap_free"
+      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      payload_available: "online"
+      payload_not_available: "offline"
+      device_class: data_size
+      state_class: measurement
+      qos: 0
+      icon: mdi:memory
+      # Convert to KB for display
+      value_template: "{{ (value | int / 1024) | round(1) }}"
+      unit_of_measurement: "kB"
+
+    # Minimum Free Heap
+    - name: "Aquarium Relay Heap Min"
+      unique_id: "lcrelay_fffe8a_heap_min"
+      state_topic: "schule/aquarium/lcrelay/fffe8a/diagnostics/heap_min"
+      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      payload_available: "online"
+      payload_not_available: "offline"
+      device_class: data_size
+      state_class: measurement
+      qos: 0
+      icon: mdi:memory
+      value_template: "{{ (value | int / 1024) | round(1) }}"
+      unit_of_measurement: "kB"
+
+    # Largest Free Block
+    - name: "Aquarium Relay Heap Largest"
+      unique_id: "lcrelay_fffe8a_heap_largest"
+      state_topic: "schule/aquarium/lcrelay/fffe8a/diagnostics/heap_largest"
+      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      payload_available: "online"
+      payload_not_available: "offline"
+      device_class: data_size
+      state_class: measurement
+      qos: 0
+      icon: mdi:memory
+      value_template: "{{ (value | int / 1024) | round(1) }}"
+      unit_of_measurement: "kB"
+
+    # System Uptime
+    - name: "Aquarium Relay Uptime"
+      unique_id: "lcrelay_fffe8a_uptime"
+      state_topic: "schule/aquarium/lcrelay/fffe8a/diagnostics/uptime"
+      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      payload_available: "online"
+      payload_not_available: "offline"
+      unit_of_measurement: "s"
+      device_class: duration
+      state_class: total_increasing
+      qos: 0
+      icon: mdi:clock-outline
+      # Convert to human-readable format
+      value_template: >-
+        {% set seconds = value | int %}
+        {% set days = (seconds / 86400) | int %}
+        {% set hours = ((seconds % 86400) / 3600) | int %}
+        {% set minutes = ((seconds % 3600) / 60) | int %}
+        {% if days > 0 %}
+          {{ days }}d {{ hours }}h
+        {% elif hours > 0 %}
+          {{ hours }}h {{ minutes }}m
+        {% else %}
+          {{ minutes }}m
+        {% endif %}
+
+    # WiFi Uptime
+    - name: "Aquarium Relay WiFi Uptime"
+      unique_id: "lcrelay_fffe8a_wifi_uptime"
+      state_topic: "schule/aquarium/lcrelay/fffe8a/diagnostics/wifi_uptime"
+      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      payload_available: "online"
+      payload_not_available: "offline"
+      unit_of_measurement: "s"
+      device_class: duration
+      state_class: total_increasing
+      qos: 0
+      icon: mdi:wifi-check
+      value_template: >-
+        {% set seconds = value | int %}
+        {% set hours = (seconds / 3600) | int %}
+        {% set minutes = ((seconds % 3600) / 60) | int %}
+        {% if hours > 0 %}
+          {{ hours }}h {{ minutes }}m
+        {% else %}
+          {{ minutes }}m
+        {% endif %}
+
+    # MQTT Uptime
+    - name: "Aquarium Relay MQTT Uptime"
+      unique_id: "lcrelay_fffe8a_mqtt_uptime"
+      state_topic: "schule/aquarium/lcrelay/fffe8a/diagnostics/mqtt_uptime"
+      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
+      payload_available: "online"
+      payload_not_available: "offline"
+      unit_of_measurement: "s"
+      device_class: duration
+      state_class: total_increasing
+      qos: 0
+      icon: mdi:swap-vertical
+      value_template: >-
+        {% set seconds = value | int %}
+        {% set hours = (seconds / 3600) | int %}
+        {% set minutes = ((seconds % 3600) / 60) | int %}
+        {% if hours > 0 %}
+          {{ hours }}h {{ minutes }}m
+        {% else %}
+          {{ minutes }}m
+        {% endif %}
+
+  # ============================================================================
+  # Relay Switches (4 channels)
+  # ============================================================================
+
   switch:
     # Relay 1
-    - name: "lcrelay 8a23d8 Relay 1"
-      unique_id: "lcrelay_8a23d8_relay_1"
-      state_topic: "lcrelay-8a23d8/switch/lcrelay_relay_1/state"
-      command_topic: "lcrelay-8a23d8/switch/lcrelay_relay_1/command"
+    - name: "Aquarium Relay 1"
+      unique_id: "lcrelay_fffe8a_relay1"
+      state_topic: "schule/aquarium/lcrelay/fffe8a/state/relay1"
+      command_topic: "schule/aquarium/lcrelay/fffe8a/command/relay1"
+      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
       payload_on: "ON"
       payload_off: "OFF"
+      payload_available: "online"
+      payload_not_available: "offline"
       state_on: "ON"
       state_off: "OFF"
-      device:
-        identifiers: lcrelay_8a23d8
-        name: "lcrelay 8a23d8"
-        model: "lcrelay_8a23d8 via MQTT"
+      optimistic: false
+      qos: 1
+      retain: true
+      icon: mdi:electric-switch
+
     # Relay 2
-    - name: "lcrelay 8a23d8 Relay 2"
-      unique_id: "lcrelay_8a23d8_relay_2"
-      state_topic: "lcrelay-8a23d8/switch/lcrelay_relay_2/state"
-      command_topic: "lcrelay-8a23d8/switch/lcrelay_relay_2/command"
+    - name: "Aquarium Relay 2"
+      unique_id: "lcrelay_fffe8a_relay2"
+      state_topic: "schule/aquarium/lcrelay/fffe8a/state/relay2"
+      command_topic: "schule/aquarium/lcrelay/fffe8a/command/relay2"
+      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
       payload_on: "ON"
       payload_off: "OFF"
+      payload_available: "online"
+      payload_not_available: "offline"
       state_on: "ON"
       state_off: "OFF"
-      device:
-        identifiers: lcrelay_8a23d8
+      optimistic: false
+      qos: 1
+      retain: true
+      icon: mdi:electric-switch
 
     # Relay 3
-    - name: "lcrelay 8a23d8 Relay 3"
-      unique_id: "lcrelay_8a23d8_relay_3"
-      state_topic: "lcrelay-8a23d8/switch/lcrelay_relay_3/state"
-      command_topic: "lcrelay-8a23d8/switch/lcrelay_relay_3/command"
+    - name: "Aquarium Relay 3"
+      unique_id: "lcrelay_fffe8a_relay3"
+      state_topic: "schule/aquarium/lcrelay/fffe8a/state/relay3"
+      command_topic: "schule/aquarium/lcrelay/fffe8a/command/relay3"
+      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
       payload_on: "ON"
       payload_off: "OFF"
+      payload_available: "online"
+      payload_not_available: "offline"
       state_on: "ON"
       state_off: "OFF"
-      device:
-        identifiers: lcrelay_8a23d8
+      optimistic: false
+      qos: 1
+      retain: true
+      icon: mdi:electric-switch
 
     # Relay 4
-    - name: "lcrelay 8a23d8 Relay 4"
-      unique_id: "lcrelay_8a23d8_relay_4"
-      state_topic: "lcrelay-8a23d8/switch/lcrelay_relay_4/state"
-      command_topic: "lcrelay-8a23d8/switch/lcrelay_relay_4/command"
+    - name: "Aquarium Relay 4"
+      unique_id: "lcrelay_fffe8a_relay4"
+      state_topic: "schule/aquarium/lcrelay/fffe8a/state/relay4"
+      command_topic: "schule/aquarium/lcrelay/fffe8a/command/relay4"
+      availability_topic: "schule/aquarium/lcrelay/fffe8a/availability"
       payload_on: "ON"
       payload_off: "OFF"
+      payload_available: "online"
+      payload_not_available: "offline"
       state_on: "ON"
       state_off: "OFF"
-      device:
-        identifiers: lcrelay_8a23d8
-
+      optimistic: false
+      qos: 1
+      retain: true
+      icon: mdi:electric-switch
 
 sensor:
   - platform: filter
