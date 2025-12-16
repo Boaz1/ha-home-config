@@ -10,6 +10,28 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
+template:
+  - sensor:
+      - name: "Aquarium CO2 (coalesced)"
+        unique_id: aquarium_co2_coalesced
+        unit_of_measurement: "ppm"
+        device_class: carbon_dioxide
+        state_class: measurement
+        state: >
+          {% set main = states('sensor.aranet4_07c99_aquarium_aranet4_07c99_aquarium_co2') %}
+          {% set backup = states('sensor.aranet4_407c99_aquarium_aranet4_407c99_aquarium_co2') %}
+          {% if main not in ['unknown','unavailable','none',''] %}
+            {{ main | float }}
+          {% elif backup not in ['unknown','unavailable','none',''] %}
+            {{ backup | float }}
+          {% else %}
+            {{ 'unavailable' }}
+          {% endif %}
+        availability: >
+          {{ states('sensor.aranet4_07c99_aquarium_aranet4_07c99_aquarium_co2') not in ['unknown','unavailable','none','']
+             or states('sensor.aranet4_407c99_aquarium_aranet4_407c99_aquarium_co2') not in ['unknown','unavailable','none',''] }}
+
+
 mqtt:
   number:
     # ============================================================================
@@ -42,19 +64,64 @@ mqtt:
     # Aranet Pro Base Station Availability Sensor
     # ============================================================================
     - name: "Aranet Pro Base Station"
-      unique_id: aranet_base_364190009546_online
-      state_topic: "AranetBaseFlow/364190009546/online"
+      icon: mdi:access-point
+      unique_id: aranet_pro_base_364190009546_binary
+      state_topic: "flow/aranetpro/364190009546/online"
       payload_on: "true"
       payload_off: "false"
       device_class: connectivity
-      icon: mdi:access-point
+      device:
+        identifiers:
+          - "aranet_pro_base_364190009546"
 
+    # Binary sensor for packet loss alarm
+    - name: "Packet Loss"
+      unique_id: aranet4_407C0D_packet_loss
+      state_topic: "flow/aranetpro/364190009546/sensors/407C0D/json/alarms"
+      value_template: "{{ 'ON' if 'packetsLost' in value_json else 'OFF' }}"
+      device_class: problem
+      icon: mdi:alert-circle
+      device:
+        identifiers:
+          - "aranet4_407C0D"
+
+    - name: "Packet Loss"
+      unique_id: aranet4_407C25_packet_loss
+      state_topic: "flow/aranetpro/364190009546/sensors/407C25/json/alarms"
+      value_template: "{{ 'ON' if 'packetsLost' in value_json else 'OFF' }}"
+      device_class: problem
+      icon: mdi:alert-circle
+      device:
+        identifiers:
+          - "aranet4_407C25"
+          
+    - name: "Packet Loss"
+      unique_id: aranet4_407C2E_packet_loss
+      state_topic: "flow/aranetpro/364190009546/sensors/407C2E/json/alarms"
+      value_template: "{{ 'ON' if 'packetsLost' in value_json else 'OFF' }}"
+      device_class: problem
+      icon: mdi:alert-circle
+      device:
+        identifiers:
+          - "aranet4_407C2E"
+
+    - name: "Packet Loss"
+      unique_id: aranet4_407C99_packet_loss
+      state_topic: "flow/aranetpro/364190009546/sensors/407C99/json/alarms"
+      value_template: "{{ 'ON' if 'packetsLost' in value_json else 'OFF' }}"
+      device_class: problem
+      icon: mdi:alert-circle
+      device:
+        identifiers:
+          - "aranet4_407C99"
+
+          
     # ============================================================================
     # lcrelay Device Online/Offline Status
     # ============================================================================
-    - name: "Aquarium fffe8a Relay Status"
-      unique_id: "lcrelay_fffe8a_status"
-      state_topic: "flow/aquarium/lcrelay/fffe8a/availability"
+    - name: "Aquarium 8a23d8 Relay Status"
+      unique_id: "lcrelay_8a23d8_status"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/availability"
       payload_on: "online"
       payload_off: "offline"
       device_class: connectivity
@@ -62,114 +129,410 @@ mqtt:
       icon: mdi:lan-connect
 
 
+
+
   sensor:
-    # ============================================================================
-    # SENSOR 1 - Update sensor_id and sensor_name for your first Aranet4 sensor
-    # ============================================================================
+  
+      # Base Station Online Status
+    - name: "Online Status"
+      unique_id: aranet_pro_base_364190009546_status
+      state_topic: "flow/aranetpro/364190009546/online"
+      value_template: "{{ 'Online' if value == 'true' else 'Offline' }}"
+      icon: mdi:access-point
+      device:
+        identifiers:
+          - "aranet_pro_base_364190009546"
+        name: "Aranet Pro Base Station"
+        manufacturer: "SAF Tehnika"
+        model: "Aranet Pro"
+        configuration_url: "http://192.168.178.99"
 
-    # Configuration variables for easy customization
-    # sensor_id: 407C0D
-    # sensor_name: 407C0D
-    # base_station_id: 364190009546
+    # Base Station Name
+    - name: "Name"
+      unique_id: aranet_pro_base_364190009546_name
+      state_topic: "flow/aranetpro/364190009546/name"
+      icon: mdi:label
+      device:
+        identifiers:
+          - "aranet_pro_base_364190009546"
 
-    # CO2 Sensor
-    - name: "Aranet4 407C0D CO2"
+  
+  # ============================================
+  # Sensor 407C0D - "Essraum"
+  # ============================================
+    # CO2
+    - name: "CO2"
       unique_id: aranet4_407C0D_co2
-      state_topic: "AranetBaseFlow/364190009546/sensors/407C0D/measurements/co2"
+      state_topic: "flow/aranetpro/364190009546/sensors/407C0D/json/measurements"
+      value_template: "{{ value_json.co2 }}"
       unit_of_measurement: "ppm"
       device_class: carbon_dioxide
       state_class: measurement
       icon: mdi:molecule-co2
       device:
-        identifiers: ["aranet4_407C0D"]
-        name: "Aranet4 407C0D"
+        identifiers:
+          - "aranet4_407C0D"
+        name: "Aranet4 Essraum"
         manufacturer: "SAF Tehnika"
-        model: "Aranet4"
+        model: "TDSPC003"
+        via_device: "aranet_pro_base_364190009546"
 
-    # Temperature Sensor
-    - name: "Aranet4 407C0D Temperature"
+    # Temperature
+    - name: "Temperature"
       unique_id: aranet4_407C0D_temperature
-      state_topic: "AranetBaseFlow/364190009546/sensors/407C0D/measurements/temperature"
+      state_topic: "flow/aranetpro/364190009546/sensors/407C0D/json/measurements"
+      value_template: "{{ value_json.temperature }}"
       unit_of_measurement: "°C"
       device_class: temperature
       state_class: measurement
-      icon: mdi:thermometer
       device:
-        identifiers: ["aranet4_407C0D"]
-        name: "Aranet4 407C0D"
-        manufacturer: "SAF Tehnika"
-        model: "Aranet4"
+        identifiers:
+          - "aranet4_407C0D"
 
-    # Humidity Sensor
-    - name: "Aranet4 407C0D Humidity"
+    # Humidity
+    - name: "Humidity"
       unique_id: aranet4_407C0D_humidity
-      state_topic: "AranetBaseFlow/364190009546/sensors/407C0D/measurements/humidity"
+      state_topic: "flow/aranetpro/364190009546/sensors/407C0D/json/measurements"
+      value_template: "{{ value_json.humidity }}"
       unit_of_measurement: "%"
       device_class: humidity
       state_class: measurement
-      icon: mdi:water-percent
       device:
-        identifiers: ["aranet4_407C0D"]
-        name: "Aranet4 407C0D"
-        manufacturer: "SAF Tehnika"
-        model: "Aranet4"
+        identifiers:
+          - "aranet4_407C0D"
 
-    # Atmospheric Pressure Sensor (converted to hPa)
-    - name: "Aranet4 407C0D Pressure"
+    # Atmospheric Pressure
+    - name: "Atmospheric Pressure"
       unique_id: aranet4_407C0D_pressure
-      state_topic: "AranetBaseFlow/364190009546/sensors/407C0D/measurements/atmosphericpressure"
+      state_topic: "flow/aranetpro/364190009546/sensors/407C0D/json/measurements"
+      value_template: "{{ (value_json.atmosphericpressure | float / 100) | round(1) }}"
       unit_of_measurement: "hPa"
       device_class: atmospheric_pressure
       state_class: measurement
       icon: mdi:gauge
-      value_template: "{{ (value | float / 100) | round(1) }}"
       device:
-        identifiers: ["aranet4_407C0D"]
-        name: "Aranet4 407C0D"
-        manufacturer: "SAF Tehnika"
-        model: "Aranet4"
+        identifiers:
+          - "aranet4_407C0D"
 
-    # Battery Level Sensor (converted to percentage)
-    - name: "Aranet4 407C0D Battery"
+    # Battery
+    - name: "Battery"
       unique_id: aranet4_407C0D_battery
-      state_topic: "AranetBaseFlow/364190009546/sensors/407C0D/measurements/battery"
+      state_topic: "flow/aranetpro/364190009546/sensors/407C0D/json/measurements"
+      value_template: "{{ ((value_json.battery | float / 3.0) * 100) | round(0) }}"
       unit_of_measurement: "%"
       device_class: battery
       state_class: measurement
-      icon: mdi:battery
-      value_template: "{{ (value | float * 100) | round(0) }}"
       device:
-        identifiers: ["aranet4_407C0D"]
-        name: "Aranet4 407C0D"
-        manufacturer: "SAF Tehnika"
-        model: "Aranet4"
+        identifiers:
+          - "aranet4_407C0D"
 
-    # Signal Strength Sensor
-    - name: "Aranet4 407C0D Signal"
+    # Signal Strength (RSSI)
+    - name: "Signal Strength"
       unique_id: aranet4_407C0D_rssi
-      state_topic: "AranetBaseFlow/364190009546/sensors/407C0D/measurements/rssi"
+      state_topic: "flow/aranetpro/364190009546/sensors/407C0D/json/measurements"
+      value_template: "{{ value_json.rssi }}"
       unit_of_measurement: "dBm"
       device_class: signal_strength
       state_class: measurement
       icon: mdi:wifi-strength-2
       device:
-        identifiers: ["aranet4_407C0D"]
-        name: "Aranet4 407C0D"
-        manufacturer: "SAF Tehnika"
-        model: "Aranet4"
+        identifiers:
+          - "aranet4_407C0D"
 
-    # Last Update Timestamp
-    - name: "Aranet4 407C0D Last Update"
-      unique_id: aranet4_407C0D_timestamp
-      state_topic: "AranetBaseFlow/364190009546/sensors/407C0D/measurements/time"
+    # Last Update Time
+    - name: "Last Update"
+      unique_id: aranet4_407C0D_last_update
+      state_topic: "flow/aranetpro/364190009546/sensors/407C0D/json/measurements"
+      value_template: "{{ value_json.time | int | timestamp_local }}"
       device_class: timestamp
       icon: mdi:clock-outline
-      value_template: "{{ value | int | timestamp_local }}"
       device:
-        identifiers: ["aranet4_407C0D"]
-        name: "Aranet4 407C0D"
+        identifiers:
+          - "aranet4_407C0D"
+
+  
+  # ============================================
+  # Sensor 407C25
+  # ============================================
+    # CO2
+    - name: "CO2"
+      unique_id: aranet4_407C25_co2
+      state_topic: "flow/aranetpro/364190009546/sensors/407C25/json/measurements"
+      value_template: "{{ value_json.co2 }}"
+      unit_of_measurement: "ppm"
+      device_class: carbon_dioxide
+      state_class: measurement
+      icon: mdi:molecule-co2
+      device:
+        identifiers:
+          - "aranet4_407C25"
+        name: "Aranet4 407C25"
         manufacturer: "SAF Tehnika"
-        model: "Aranet4"
+        model: "TDSPC003"
+        via_device: "aranet_pro_base_364190009546"
+
+    # Temperature
+    - name: "Temperature"
+      unique_id: aranet4_407C25_temperature
+      state_topic: "flow/aranetpro/364190009546/sensors/407C25/json/measurements"
+      value_template: "{{ value_json.temperature }}"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C25"
+
+    # Humidity
+    - name: "Humidity"
+      unique_id: aranet4_407C25_humidity
+      state_topic: "flow/aranetpro/364190009546/sensors/407C25/json/measurements"
+      value_template: "{{ value_json.humidity }}"
+      unit_of_measurement: "%"
+      device_class: humidity
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C25"
+
+    # Atmospheric Pressure
+    - name: "Atmospheric Pressure"
+      unique_id: aranet4_407C25_pressure
+      state_topic: "flow/aranetpro/364190009546/sensors/407C25/json/measurements"
+      value_template: "{{ (value_json.atmosphericpressure | float / 100) | round(1) }}"
+      unit_of_measurement: "hPa"
+      device_class: atmospheric_pressure
+      state_class: measurement
+      icon: mdi:gauge
+      device:
+        identifiers:
+          - "aranet4_407C25"
+
+    # Battery
+    - name: "Battery"
+      unique_id: aranet4_407C25_battery
+      state_topic: "flow/aranetpro/364190009546/sensors/407C25/json/measurements"
+      value_template: "{{ ((value_json.battery | float / 3.0) * 100) | round(0) }}"
+      unit_of_measurement: "%"
+      device_class: battery
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C25"
+
+    # Signal Strength (RSSI)
+    - name: "Signal Strength"
+      unique_id: aranet4_407C25_rssi
+      state_topic: "flow/aranetpro/364190009546/sensors/407C25/json/measurements"
+      value_template: "{{ value_json.rssi }}"
+      unit_of_measurement: "dBm"
+      device_class: signal_strength
+      state_class: measurement
+      icon: mdi:wifi-strength-2
+      device:
+        identifiers:
+          - "aranet4_407C25"
+
+    # Last Update Time
+    - name: "Last Update"
+      unique_id: aranet4_407C25_last_update
+      state_topic: "flow/aranetpro/364190009546/sensors/407C25/json/measurements"
+      value_template: "{{ value_json.time | int | timestamp_local }}"
+      device_class: timestamp
+      icon: mdi:clock-outline
+      device:
+        identifiers:
+          - "aranet4_407C25"
+  
+  # ============================================
+  # Sensor 407C2E - "Spare"
+  # ============================================
+    # CO2
+    - name: "CO2"
+      unique_id: aranet4_407C2E_co2
+      state_topic: "flow/aranetpro/364190009546/sensors/407C2E/json/measurements"
+      value_template: "{{ value_json.co2 }}"
+      unit_of_measurement: "ppm"
+      device_class: carbon_dioxide
+      state_class: measurement
+      icon: mdi:molecule-co2
+      device:
+        identifiers:
+          - "aranet4_407C2E"
+        name: "Aranet4 Spare"
+        manufacturer: "SAF Tehnika"
+        model: "TDSPC003"
+        via_device: "aranet_pro_base_364190009546"
+
+    # Temperature
+    - name: "Temperature"
+      unique_id: aranet4_407C2E_temperature
+      state_topic: "flow/aranetpro/364190009546/sensors/407C2E/json/measurements"
+      value_template: "{{ value_json.temperature }}"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C2E"
+
+    # Humidity
+    - name: "Humidity"
+      unique_id: aranet4_407C2E_humidity
+      state_topic: "flow/aranetpro/364190009546/sensors/407C2E/json/measurements"
+      value_template: "{{ value_json.humidity }}"
+      unit_of_measurement: "%"
+      device_class: humidity
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C2E"
+
+    # Atmospheric Pressure
+    - name: "Atmospheric Pressure"
+      unique_id: aranet4_407C2E_pressure
+      state_topic: "flow/aranetpro/364190009546/sensors/407C2E/json/measurements"
+      value_template: "{{ (value_json.atmosphericpressure | float / 100) | round(1) }}"
+      unit_of_measurement: "hPa"
+      device_class: atmospheric_pressure
+      state_class: measurement
+      icon: mdi:gauge
+      device:
+        identifiers:
+          - "aranet4_407C2E"
+
+    # Battery
+    - name: "Battery"
+      unique_id: aranet4_407C2E_battery
+      state_topic: "flow/aranetpro/364190009546/sensors/407C2E/json/measurements"
+      value_template: "{{ ((value_json.battery | float / 3.0) * 100) | round(0) }}"
+      unit_of_measurement: "%"
+      device_class: battery
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C2E"
+
+    # Signal Strength (RSSI)
+    - name: "Signal Strength"
+      unique_id: aranet4_407C2E_rssi
+      state_topic: "flow/aranetpro/364190009546/sensors/407C2E/json/measurements"
+      value_template: "{{ value_json.rssi }}"
+      unit_of_measurement: "dBm"
+      device_class: signal_strength
+      state_class: measurement
+      icon: mdi:wifi-strength-2
+      device:
+        identifiers:
+          - "aranet4_407C2E"
+
+    # Last Update Time
+    - name: "Last Update"
+      unique_id: aranet4_407C2E_last_update
+      state_topic: "flow/aranetpro/364190009546/sensors/407C2E/json/measurements"
+      value_template: "{{ value_json.time | int | timestamp_local }}"
+      device_class: timestamp
+      icon: mdi:clock-outline
+      device:
+        identifiers:
+          - "aranet4_407C2E"
+
+
+  # ============================================
+  # Sensor 407C99
+  # ============================================
+    # CO2
+    - name: "CO2"
+      unique_id: aranet4_407C99_co2
+      state_topic: "flow/aranetpro/364190009546/sensors/407C99/json/measurements"
+      value_template: "{{ value_json.co2 }}"
+      unit_of_measurement: "ppm"
+      device_class: carbon_dioxide
+      state_class: measurement
+      icon: mdi:molecule-co2
+      device:
+        identifiers:
+          - "aranet4_407C99"
+        name: "Aranet4 407C99"
+        manufacturer: "SAF Tehnika"
+        model: "TDSPC003"
+        via_device: "aranet_pro_base_364190009546"
+
+    # Temperature
+    - name: "Temperature"
+      unique_id: aranet4_407C99_temperature
+      state_topic: "flow/aranetpro/364190009546/sensors/407C99/json/measurements"
+      value_template: "{{ value_json.temperature }}"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C99"
+
+    # Humidity
+    - name: "Humidity"
+      unique_id: aranet4_407C99_humidity
+      state_topic: "flow/aranetpro/364190009546/sensors/407C99/json/measurements"
+      value_template: "{{ value_json.humidity }}"
+      unit_of_measurement: "%"
+      device_class: humidity
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C99"
+
+    # Atmospheric Pressure
+    - name: "Atmospheric Pressure"
+      unique_id: aranet4_407C99_pressure
+      state_topic: "flow/aranetpro/364190009546/sensors/407C99/json/measurements"
+      value_template: "{{ (value_json.atmosphericpressure | float / 100) | round(1) }}"
+      unit_of_measurement: "hPa"
+      device_class: atmospheric_pressure
+      state_class: measurement
+      icon: mdi:gauge
+      device:
+        identifiers:
+          - "aranet4_407C99"
+
+    # Battery
+    - name: "Battery"
+      unique_id: aranet4_407C99_battery
+      state_topic: "flow/aranetpro/364190009546/sensors/407C99/json/measurements"
+      value_template: "{{ ((value_json.battery | float / 3.0) * 100) | round(0) }}"
+      unit_of_measurement: "%"
+      device_class: battery
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C99"
+
+    # Signal Strength (RSSI)
+    - name: "Signal Strength"
+      unique_id: aranet4_407C99_rssi
+      state_topic: "flow/aranetpro/364190009546/sensors/407C99/json/measurements"
+      value_template: "{{ value_json.rssi }}"
+      unit_of_measurement: "dBm"
+      device_class: signal_strength
+      state_class: measurement
+      icon: mdi:wifi-strength-2
+      device:
+        identifiers:
+          - "aranet4_407C99"
+
+    # Last Update Time
+    - name: "Last Update"
+      unique_id: aranet4_407C99_last_update
+      state_topic: "flow/aranetpro/364190009546/sensors/407C99/json/measurements"
+      value_template: "{{ value_json.time | int | timestamp_local }}"
+      device_class: timestamp
+      icon: mdi:clock-outline
+      device:
+        identifiers:
+          - "aranet4_407C99"
+
+  
+
 
     # ============================================================================
     # Birb Sensors
@@ -205,13 +568,13 @@ mqtt:
       unit_of_measurement: "V"
    
     # ============================================================================
-    # lcrelay-fffe8a Sensors
+    # lcrelay-8a23d8 Sensors
     # ============================================================================
     # Temperature Sensor
-    - name: "Aquarium fffe8a Temperature"
-      unique_id: "lcrelay_fffe8a_temperature"
-      state_topic: "flow/aquarium/lcrelay/fffe8a/telemetry/temperature"
-      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
+    - name: "Aquarium 8a23d8 Temperature"
+      unique_id: "lcrelay_8a23d8_temperature"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/telemetry/temperature"
+      availability_topic: "flow/aquarium/lcrelay/8a23d8/availability"
       payload_available: "online"
       payload_not_available: "offline"
       unit_of_measurement: "°C"
@@ -221,10 +584,10 @@ mqtt:
       icon: mdi:thermometer
 
     # WiFi Signal Strength
-    - name: "Aquarium fffe8a Relay WiFi RSSI"
-      unique_id: "lcrelay_fffe8a_wifi_rssi"
-      state_topic: "flow/aquarium/lcrelay/fffe8a/telemetry/wifi_rssi"
-      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
+    - name: "Aquarium 8a23d8 Relay WiFi RSSI"
+      unique_id: "lcrelay_8a23d8_wifi_rssi"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/telemetry/wifi_rssi"
+      availability_topic: "flow/aquarium/lcrelay/8a23d8/availability"
       payload_available: "online"
       payload_not_available: "offline"
       unit_of_measurement: "dBm"
@@ -234,20 +597,20 @@ mqtt:
       icon: mdi:wifi
 
     # WiFi SSID
-    - name: "Aquarium fffe8a Relay WiFi Network"
-      unique_id: "lcrelay_fffe8a_wifi_ssid"
-      state_topic: "flow/aquarium/lcrelay/fffe8a/telemetry/wifi_ssid"
-      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
+    - name: "Aquarium 8a23d8 Relay WiFi Network"
+      unique_id: "lcrelay_8a23d8_wifi_ssid"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/telemetry/wifi_ssid"
+      availability_topic: "flow/aquarium/lcrelay/8a23d8/availability"
       payload_available: "online"
       payload_not_available: "offline"
       qos: 0
       icon: mdi:access-point-network
 
     # IP Address
-    - name: "Aquarium fffe8a Relay IP Address"
-      unique_id: "lcrelay_fffe8a_ip_address"
-      state_topic: "flow/aquarium/lcrelay/fffe8a/telemetry/ip_address"
-      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
+    - name: "Aquarium 8a23d8 Relay IP Address"
+      unique_id: "lcrelay_8a23d8_ip_address"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/telemetry/ip_address"
+      availability_topic: "flow/aquarium/lcrelay/8a23d8/availability"
       payload_available: "online"
       payload_not_available: "offline"
       qos: 0
@@ -258,10 +621,10 @@ mqtt:
     # ============================================================================
 
     # Free Heap Memory
-    - name: "Aquarium fffe8a Relay Heap Free"
-      unique_id: "lcrelay_fffe8a_heap_free"
-      state_topic: "flow/aquarium/lcrelay/fffe8a/diagnostics/heap_free"
-      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
+    - name: "Aquarium 8a23d8 Relay Heap Free"
+      unique_id: "lcrelay_8a23d8_heap_free"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/diagnostics/heap_free"
+      availability_topic: "flow/aquarium/lcrelay/8a23d8/availability"
       payload_available: "online"
       payload_not_available: "offline"
       device_class: data_size
@@ -273,10 +636,10 @@ mqtt:
       unit_of_measurement: "kB"
 
     # Minimum Free Heap
-    - name: "Aquarium fffe8a Relay Heap Min"
-      unique_id: "lcrelay_fffe8a_heap_min"
-      state_topic: "flow/aquarium/lcrelay/fffe8a/diagnostics/heap_min"
-      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
+    - name: "Aquarium 8a23d8 Relay Heap Min"
+      unique_id: "lcrelay_8a23d8_heap_min"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/diagnostics/heap_min"
+      availability_topic: "flow/aquarium/lcrelay/8a23d8/availability"
       payload_available: "online"
       payload_not_available: "offline"
       device_class: data_size
@@ -287,10 +650,10 @@ mqtt:
       unit_of_measurement: "kB"
 
     # Largest Free Block
-    - name: "Aquarium fffe8a Relay Heap Largest"
-      unique_id: "lcrelay_fffe8a_heap_largest"
-      state_topic: "flow/aquarium/lcrelay/fffe8a/diagnostics/heap_largest"
-      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
+    - name: "Aquarium 8a23d8 Relay Heap Largest"
+      unique_id: "lcrelay_8a23d8_heap_largest"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/diagnostics/heap_largest"
+      availability_topic: "flow/aquarium/lcrelay/8a23d8/availability"
       payload_available: "online"
       payload_not_available: "offline"
       device_class: data_size
@@ -301,10 +664,10 @@ mqtt:
       unit_of_measurement: "kB"
 
     # System Uptime
-    - name: "Aquarium fffe8a Relay Uptime"
-      unique_id: "lcrelay_fffe8a_uptime"
-      state_topic: "flow/aquarium/lcrelay/fffe8a/diagnostics/uptime"
-      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
+    - name: "Aquarium 8a23d8 Relay Uptime"
+      unique_id: "lcrelay_8a23d8_uptime"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/diagnostics/uptime"
+      availability_topic: "flow/aquarium/lcrelay/8a23d8/availability"
       payload_available: "online"
       payload_not_available: "offline"
       unit_of_measurement: "s"
@@ -327,10 +690,10 @@ mqtt:
         {% endif %}
 
     # WiFi Uptime
-    - name: "Aquarium fffe8a Relay WiFi Uptime"
-      unique_id: "lcrelay_fffe8a_wifi_uptime"
-      state_topic: "flow/aquarium/lcrelay/fffe8a/diagnostics/wifi_uptime"
-      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
+    - name: "Aquarium 8a23d8 Relay WiFi Uptime"
+      unique_id: "lcrelay_8a23d8_wifi_uptime"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/diagnostics/wifi_uptime"
+      availability_topic: "flow/aquarium/lcrelay/8a23d8/availability"
       payload_available: "online"
       payload_not_available: "offline"
       unit_of_measurement: "s"
@@ -349,10 +712,10 @@ mqtt:
         {% endif %}
 
     # MQTT Uptime
-    - name: "Aquarium fffe8a Relay MQTT Uptime"
-      unique_id: "lcrelay_fffe8a_mqtt_uptime"
-      state_topic: "flow/aquarium/lcrelay/fffe8a/diagnostics/mqtt_uptime"
-      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
+    - name: "Aquarium 8a23d8 Relay MQTT Uptime"
+      unique_id: "lcrelay_8a23d8_mqtt_uptime"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/diagnostics/mqtt_uptime"
+      availability_topic: "flow/aquarium/lcrelay/8a23d8/availability"
       payload_available: "online"
       payload_not_available: "offline"
       unit_of_measurement: "s"
@@ -376,11 +739,11 @@ mqtt:
 
   switch:
     # Relay 1
-    - name: "Aquarium fffe8a Relay 1"
-      unique_id: "lcrelay_fffe8a_relay1"
-      state_topic: "flow/aquarium/lcrelay/fffe8a/state/relay1"
-      command_topic: "flow/aquarium/lcrelay/fffe8a/command/relay1"
-      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
+    - name: "Aquarium 8a23d8 Relay 1"
+      unique_id: "lcrelay_8a23d8_relay1"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/state/relay1"
+      command_topic: "flow/aquarium/lcrelay/8a23d8/command/relay1"
+      availability_topic: "flow/aquarium/lcrelay/8a23d8/availability"
       payload_on: "ON"
       payload_off: "OFF"
       payload_available: "online"
@@ -393,11 +756,11 @@ mqtt:
       icon: mdi:electric-switch
 
     # Relay 2
-    - name: "Aquarium fffe8a Relay 2"
-      unique_id: "lcrelay_fffe8a_relay2"
-      state_topic: "flow/aquarium/lcrelay/fffe8a/state/relay2"
-      command_topic: "flow/aquarium/lcrelay/fffe8a/command/relay2"
-      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
+    - name: "Aquarium 8a23d8 Relay 2"
+      unique_id: "lcrelay_8a23d8_relay2"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/state/relay2"
+      command_topic: "flow/aquarium/lcrelay/8a23d8/command/relay2"
+      availability_topic: "flow/aquarium/lcrelay/8a23d8/availability"
       payload_on: "ON"
       payload_off: "OFF"
       payload_available: "online"
@@ -410,11 +773,11 @@ mqtt:
       icon: mdi:electric-switch
 
     # Relay 3
-    - name: "Aquarium fffe8a Relay 3"
-      unique_id: "lcrelay_fffe8a_relay3"
-      state_topic: "flow/aquarium/lcrelay/fffe8a/state/relay3"
-      command_topic: "flow/aquarium/lcrelay/fffe8a/command/relay3"
-      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
+    - name: "Aquarium 8a23d8 Relay 3"
+      unique_id: "lcrelay_8a23d8_relay3"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/state/relay3"
+      command_topic: "flow/aquarium/lcrelay/8a23d8/command/relay3"
+      availability_topic: "flow/aquarium/lcrelay/8a23d8/availability"
       payload_on: "ON"
       payload_off: "OFF"
       payload_available: "online"
@@ -427,11 +790,11 @@ mqtt:
       icon: mdi:electric-switch
 
     # Relay 4
-    - name: "Aquarium fffe8a Relay 4"
-      unique_id: "lcrelay_fffe8a_relay4"
-      state_topic: "flow/aquarium/lcrelay/fffe8a/state/relay4"
-      command_topic: "flow/aquarium/lcrelay/fffe8a/command/relay4"
-      availability_topic: "flow/aquarium/lcrelay/fffe8a/availability"
+    - name: "Aquarium 8a23d8 Relay 4"
+      unique_id: "lcrelay_8a23d8_relay4"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/state/relay4"
+      command_topic: "flow/aquarium/lcrelay/8a23d8/command/relay4"
+      availability_topic: "flow/aquarium/lcrelay/8a23d8/availability"
       payload_on: "ON"
       payload_off: "OFF"
       payload_available: "online"
