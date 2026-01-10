@@ -4,7 +4,7 @@
   triggers:
   - trigger: state
     entity_id:
-    - sensor.aranet4_07c99_aquarium_aranet4_07c99_aquarium_co2
+    - sensor.aranet4_407c0d_aranet4_407c0d_co2
   conditions:
   - condition: template
     value_template: '{{ trigger.to_state.state not in [''unknown'', ''unavailable'']
@@ -12,39 +12,9 @@
   actions:
   - action: number.set_value
     target:
-      entity_id: number.birb_co2_display
+      entity_id: number.birb_7fb0d8_co2_display
     data:
       value: '{{ trigger.to_state.state | float }}'
-  mode: single
-- id: '1764929811365'
-  alias: UV on
-  description: ''
-  triggers:
-  - trigger: numeric_state
-    entity_id:
-    - number.birb_co2_display
-    above: 850
-  conditions: []
-  actions:
-  - type: turn_on
-    device_id: 512b03c60fadc08f41b58840635caad0
-    entity_id: a81615a2a6018728d03bf934552180b1
-    domain: switch
-  mode: single
-- id: '1764929974602'
-  alias: UV off
-  description: ''
-  triggers:
-  - trigger: numeric_state
-    entity_id:
-    - number.birb_co2_display
-    below: 750
-  conditions: []
-  actions:
-  - type: turn_off
-    device_id: 512b03c60fadc08f41b58840635caad0
-    entity_id: a81615a2a6018728d03bf934552180b1
-    domain: switch
   mode: single
 - id: '1765060726911'
   alias: CO2 800 lcrelay 1 on
@@ -52,14 +22,15 @@
   triggers:
   - trigger: numeric_state
     entity_id:
-    - number.birb_co2_display
+    - number.birb_7fb0d8_co2_display
     above: 800
   conditions: []
   actions:
-  - type: turn_on
-    device_id: a58ba31a95927fe2344053eda4fdc798
-    entity_id: a4d62317890a78e136703d8828bf9db7
-    domain: switch
+  - action: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.aquarium_8a23d8_relay_1
   mode: single
 - id: '1765061147628'
   alias: CO2 UV lcrelay 1
@@ -67,27 +38,66 @@
   triggers:
   - trigger: numeric_state
     entity_id:
-    - number.birb_co2_display
+    - number.birb_7fb0d8_co2_display
     below: 700
   conditions: []
   actions:
-  - type: turn_off
-    device_id: a58ba31a95927fe2344053eda4fdc798
-    entity_id: a4d62317890a78e136703d8828bf9db7
-    domain: switch
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.aquarium_8a23d8_relay_1
   mode: single
 - id: '1765228312412'
   alias: Set home CO2
   description: ''
   triggers:
-  - trigger: state
-    entity_id:
-    - sensor.aranet4_boaz_2bfd5_carbon_dioxide
-  conditions: []
+  - entity_id: sensor.aranet4_boaz_2bfd5_carbon_dioxide
+    trigger: state
+  conditions:
+  - condition: template
+    value_template: '{{ states(''sensor.aranet4_boaz_2bfd5_carbon_dioxide'') not in
+      [''unknown'',''unavailable'',''none'',''''] }}
+
+      '
   actions:
-  - action: number.set_value
-    metadata: {}
+  - target:
+      entity_id: number.birb_7F98A4_co2_display
+    data:
+      value: '{{ states(''sensor.aranet4_boaz_2bfd5_carbon_dioxide'') | float(0) }}'
+    action: number.set_value
+  mode: single
+- id: '1767363122633'
+  alias: Birb-7FB0D8 - Track telemetry arrival (JSON only, trigger-filtered)
+  triggers:
+  - topic: birb/telemetry/Birb-7FB0D8
+    value_template: "{% set j = value | from_json(default={}) %} {{ j.device == 'Birb-7FB0D8'\n
+      \  and j.timestamp is defined\n   and j.co2 is defined\n   and j.battery_pct
+      is defined }}\n"
+    trigger: mqtt
+  actions:
+  - target:
+      entity_id: input_datetime.birb_7fb0d8_last_telemetry
+    data:
+      timestamp: '{{ now().timestamp() }}'
+    action: input_datetime.set_datetime
+  - target:
+      entity_id: counter.birb_7fb0d8_telemetry_count
+    action: counter.increment
     data: {}
-    target:
-      entity_id: number.birb_home_co2_display
+  mode: queued
+- id: '1767368183498'
+  alias: Birb-7FB0D8 - Alert if telemetry missing
+  description: ''
+  triggers:
+  - entity_id: sensor.birb_7fb0d8_telemetry_age
+    above: 90
+    for: 00:00:30
+    trigger: numeric_state
+  actions:
+  - data:
+      title: Birb telemetry missing
+      message: 'No telemetry from Birb-7FB0D8 for >90s (now: {{ states(''sensor.birb_7fb0d8_telemetry_age'')
+        }}s).'
+    action: notify.persistent_notification
   mode: single

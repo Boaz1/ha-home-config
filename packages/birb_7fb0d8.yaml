@@ -1,0 +1,144 @@
+# /config/packages/birb_7fb0d8.yaml
+#
+# All measurements are regular MQTT sensors (device-grouped) extracted from the
+# telemetry JSON on: flow/birb/7FB0D8/telemetry
+#
+# Sleepy-device availability:
+# - Availability is computed from telemetry freshness (timestamp within 5 minutes).
+# - Note: Your HA build does NOT allow `device:` under `template:` entities, so the
+#   availability + last_seen entities will not be device-grouped.
+
+mqtt:
+  number:
+    - name: "Birb 7FB0D8 CO2 Display"
+      unique_id: birb_7fb0d8_co2_set
+      command_topic: "flow/birb/7FB0D8/co2/set"
+      state_topic:   "flow/birb/7FB0D8/co2/state"
+      command_template: >
+        {{ {'co2': value|int, 'timestamp': (utcnow().isoformat() ~ 'Z')} | tojson }}
+      value_template: "{{ value_json.co2 }}"
+      min: 420
+      max: 2400
+      step: 1
+      mode: slider
+      optimistic: true
+      retain: true
+      device:
+        identifiers: ["birb_7fb0d8"]
+        name: "Birb 7FB0D8"
+        manufacturer: "Boaz"
+        model: "Birb v1.0.0.b27"
+
+  sensor:
+    # Raw telemetry container (stores full JSON as attributes)
+    - name: "Birb 7FB0D8 Telemetry"
+      unique_id: birb_7fb0d8_telemetry
+      state_topic: "flow/birb/7FB0D8/telemetry"
+      value_template: "{{ value_json.version | default('unknown') }}"
+      json_attributes_topic: "flow/birb/7FB0D8/telemetry"
+      device:
+        identifiers: ["birb_7fb0d8"]
+
+    # Device-grouped sensors extracted from telemetry JSON
+    - name: "Birb 7FB0D8 CO2"
+      unique_id: birb_7fb0d8_co2
+      state_topic: "flow/birb/7FB0D8/telemetry"
+      unit_of_measurement: "ppm"
+      device_class: carbon_dioxide
+      value_template: "{{ value_json.co2 | int(0) }}"
+      device:
+        identifiers: ["birb_7fb0d8"]
+
+    - name: "Birb 7FB0D8 Battery Percent"
+      unique_id: birb_7fb0d8_battery_percent
+      state_topic: "flow/birb/7FB0D8/telemetry"
+      value_template: "{{ value_json.battery_pct | float(0) }}"
+      unit_of_measurement: "%"
+      device_class: battery
+      state_class: measurement
+      device:
+        identifiers: ["birb_7fb0d8"]
+        name: "Birb 7FB0D8"
+
+    - name: "Birb 7FB0D8 Battery Voltage"
+      unique_id: birb_7fb0d8_battery_voltage
+      state_topic: "flow/birb/7FB0D8/telemetry"
+      value_template: "{{ value_json.battery_v | float(0) }}"
+      unit_of_measurement: "V"
+      device_class: voltage
+      state_class: measurement
+      device:
+        identifiers: ["birb_7fb0d8"]
+
+    - name: "Birb 7FB0D8 Servo Position"
+      unique_id: birb_7fb0d8_servo_position
+      state_topic: "flow/birb/7FB0D8/telemetry"
+      value_template: "{{ value_json.servo | int(0) }}"
+      unit_of_measurement: "°"
+      state_class: measurement
+      device:
+        identifiers: ["birb_7fb0d8"]
+
+    - name: "Birb 7FB0D8 RSSI"
+      unique_id: birb_7fb0d8_rssi
+      state_topic: "flow/birb/7FB0D8/telemetry"
+      unit_of_measurement: "dBm"
+      device_class: signal_strength
+      value_template: "{{ value_json.rssi | int(0) }}"
+      device:
+        identifiers: ["birb_7fb0d8"]
+
+    - name: "Birb 7FB0D8 Boot Count"
+      unique_id: birb_7fb0d8_boot
+      state_topic: "flow/birb/7FB0D8/telemetry"
+      value_template: "{{ value_json.boot | int(0) }}"
+      device:
+        identifiers: ["birb_7fb0d8"]
+
+    - name: "Birb 7FB0D8 WiFi SSID"
+      unique_id: birb_7fb0d8_ssid
+      state_topic: "flow/birb/7FB0D8/telemetry"
+      value_template: "{{ value_json.ssid | default('unknown') }}"
+      device:
+        identifiers: ["birb_7fb0d8"]
+
+    - name: "Birb 7FB0D8 IP"
+      unique_id: birb_7fb0d8_ip
+      state_topic: "flow/birb/7FB0D8/telemetry"
+      value_template: "{{ value_json.ip | default('') }}"
+      device:
+        identifiers: ["birb_7fb0d8"]
+
+    - name: "Birb 7FB0D8 Firmware Version"
+      unique_id: birb_7fb0d8_version
+      state_topic: "flow/birb/7FB0D8/telemetry"
+      value_template: "{{ value_json.version | default('unknown') }}"
+      device:
+        identifiers: ["birb_7fb0d8"]
+
+    - name: "Birb 7FB0D8 Last Seen"
+      state_topic: "flow/birb/7FB0D8/telemetry"
+      value_template: "{{ value_json.timestamp }}"
+      device_class: timestamp
+      device:
+        identifiers: ["birb_7fb0d8"]
+
+template:
+  - trigger:
+      - platform: time_pattern
+        minutes: "/1"
+      - platform: state
+        entity_id: sensor.birb_7fb0d8_telemetry
+    binary_sensor:
+      - name: "Birb 7FB0D8 Availability"
+        unique_id: birb_7fb0d8_availability
+        device_class: connectivity
+        state: >
+          {% set ts = state_attr('sensor.birb_7fb0d8_telemetry', 'timestamp') %}
+          {% if ts %}
+            {{ (now() - as_datetime(ts)).total_seconds() < 300 }}
+          {% else %}
+            false
+          {% endif %}
+
+

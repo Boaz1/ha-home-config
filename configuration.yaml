@@ -7,57 +7,14 @@ frontend:
   themes: !include_dir_merge_named themes
 
 automation: !include automations.yaml
-script: !include scripts.yaml
+# script: !include scripts.yaml
 scene: !include scenes.yaml
+homeassistant:
+  packages: !include_dir_named packages
 
-template:
-  - sensor:
-      - name: "Aquarium CO2 (coalesced)"
-        unique_id: aquarium_co2_coalesced
-        unit_of_measurement: "ppm"
-        device_class: carbon_dioxide
-        state_class: measurement
-        state: >
-          {% set main = states('sensor.aranet4_07c99_aquarium_aranet4_07c99_aquarium_co2') %}
-          {% set backup = states('sensor.aranet4_407c99_aquarium_aranet4_407c99_aquarium_co2') %}
-          {% if main not in ['unknown','unavailable','none',''] %}
-            {{ main | float }}
-          {% elif backup not in ['unknown','unavailable','none',''] %}
-            {{ backup | float }}
-          {% else %}
-            {{ 'unavailable' }}
-          {% endif %}
-        availability: >
-          {{ states('sensor.aranet4_07c99_aquarium_aranet4_07c99_aquarium_co2') not in ['unknown','unavailable','none','']
-             or states('sensor.aranet4_407c99_aquarium_aranet4_407c99_aquarium_co2') not in ['unknown','unavailable','none',''] }}
 
 
 mqtt:
-  number:
-    # ============================================================================
-    # MQTT Number Entities for Birb CO2 Display
-    # ============================================================================
-    - name: "Birb CO2 Display"
-      unique_id: birb_co2_set
-      command_topic: "birb/co2/set"
-      state_topic: "birb/co2/state"
-      min: 420
-      max: 2400
-      step: 1
-      mode: slider
-      optimistic: true
-      retain: true
-      
-    - name: "Birb Home CO2 Display"
-      unique_id: birb_home_co2_set
-      command_topic: "birb/co2/Birb-7F98A4/set"
-      state_topic: "birb/co2/Birb-7F98A4/state"
-      min: 420
-      max: 2400
-      step: 1
-      mode: slider
-      optimistic: true
-      retain: true
 
   binary_sensor:
     # ============================================================================
@@ -252,7 +209,7 @@ mqtt:
 
   
   # ============================================
-  # Sensor 407C25
+  # Sensor 407C25 Werkraum
   # ============================================
     # CO2
     - name: "CO2"
@@ -266,7 +223,7 @@ mqtt:
       device:
         identifiers:
           - "aranet4_407C25"
-        name: "Aranet4 407C25"
+        name: "Aranet4 407C25 Werkraum"
         manufacturer: "SAF Tehnika"
         model: "TDSPC003"
         via_device: "aranet_pro_base_364190009546"
@@ -358,8 +315,8 @@ mqtt:
       icon: mdi:molecule-co2
       device:
         identifiers:
-          - "aranet4_407C2E"
-        name: "Aranet4 Spare"
+          - "aranet4_407C2E Spare"
+        name: "Aranet4 407C2E Spare"
         manufacturer: "SAF Tehnika"
         model: "TDSPC003"
         via_device: "aranet_pro_base_364190009546"
@@ -453,7 +410,7 @@ mqtt:
       device:
         identifiers:
           - "aranet4_407C99"
-        name: "Aranet4 407C99"
+        name: "Aranet4 407C99 Aquarium"
         manufacturer: "SAF Tehnika"
         model: "TDSPC003"
         via_device: "aranet_pro_base_364190009546"
@@ -531,42 +488,8 @@ mqtt:
         identifiers:
           - "aranet4_407C99"
 
-  
 
 
-    # ============================================================================
-    # Birb Sensors
-    # ============================================================================
-    - name: "Birb 7F98A4 Servo Position"
-      state_topic: "birb/sensor/Birb-7F98A4/Birb-7F98A4_servo_position/state"
-      unit_of_measurement: "°"
-    - name: "Birb 7F98A4 Battery"
-      state_topic: "birb/sensor/Birb-7F98A4/Birb-7F98A4_battery/state"
-      unit_of_measurement: "%"
-    - name: "Birb 7F98A4 Battery Voltage"
-      state_topic: "birb/sensor/Birb-7F98A4/Birb-7F98A4_battery_voltage/state"
-      unit_of_measurement: "V"
-
-    - name: "Birb 8A278C Servo Position"
-      state_topic: "birb/sensor/Birb-8A278C/Birb-8A278C_servo_position/state"
-      unit_of_measurement: "°"
-    - name: "Birb 8A278C Battery"
-      state_topic: "birb/sensor/Birb-8A278C/Birb-8A278C_battery/state"
-      unit_of_measurement: "%"
-    - name: "Birb 8A278C Battery Voltage"
-      state_topic: "birb/sensor/Birb-8A278C/Birb-8A278C_battery_voltage/state"
-      unit_of_measurement: "V"
-      
-    - name: "Birb 610990 Servo Position"
-      state_topic: "birb/sensor/Birb-610990/Birb-610990_servo_position/state"
-      unit_of_measurement: "°"
-    - name: "Birb 610990 Battery"
-      state_topic: "birb/sensor/Birb-610990/Birb-610990_battery/state"
-      unit_of_measurement: "%"
-    - name: "Birb 610990 Battery Voltage"
-      state_topic: "birb/sensor/Birb-610990/Birb-610990_battery_voltage/state"
-      unit_of_measurement: "V"
-   
     # ============================================================================
     # lcrelay-8a23d8 Sensors
     # ============================================================================
@@ -732,6 +655,97 @@ mqtt:
         {% else %}
           {{ minutes }}m
         {% endif %}
+
+
+
+    ##########################################################################################
+    # LCrelay Aranet4
+    ##########################################################################################
+    - name: "LCrelay Aranet4 CO2"
+      unique_id: "lcrelay_aranet4_07c99_co2"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/aranet4/07c99/co2"
+      value_template: "{{ value_json.value }}"
+      unit_of_measurement: "ppm"
+      device_class: carbon_dioxide
+      state_class: measurement
+      json_attributes_topic: "flow/aquarium/lcrelay/8a23d8/aranet4/07c99/co2"
+      json_attributes_template: >
+        {{ {"unit": value_json.unit, "time": value_json.time} | tojson }}
+      device:
+        identifiers: ["lcrelay_aranet4_07c99"]
+        name: "LCrelay Aranet4 07c99"
+        manufacturer: "Aranet"
+        model: "Aranet4"
+        suggested_area: "Aquarium"
+
+    - name: "LCrelay Aranet4 Temperature"
+      unique_id: "lcrelay_aranet4_07c99_temperature"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/aranet4/07c99/temperature"
+      value_template: "{{ value_json.value }}"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      json_attributes_topic: "flow/aquarium/lcrelay/8a23d8/aranet4/07c99/temperature"
+      json_attributes_template: >
+        {{ {"unit": value_json.unit, "time": value_json.time} | tojson }}
+      device:
+        identifiers: ["lcrelay_aranet4_07c99"]
+
+    - name: "Aquarium Aranet4 Humidity"
+      unique_id: "lcrelay_aranet4_07c99_humidity"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/aranet4/07c99/humidity"
+      value_template: "{{ value_json.value }}"
+      unit_of_measurement: "%"
+      device_class: humidity
+      state_class: measurement
+      json_attributes_topic: "flow/aquarium/lcrelay/8a23d8/aranet4/07c99/humidity"
+      json_attributes_template: >
+        {{ {"unit": value_json.unit, "time": value_json.time} | tojson }}
+      device:
+        identifiers: ["lcrelay_aranet4_07c99"]
+
+    - name: "Aquarium Aranet4 Pressure"
+      unique_id: "lcrelay_aranet4_07c99_pressure"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/aranet4/07c99/pressure"
+      value_template: "{{ value_json.value }}"
+      unit_of_measurement: "hPa"
+      device_class: atmospheric_pressure
+      state_class: measurement
+      json_attributes_topic: "flow/aquarium/lcrelay/8a23d8/aranet4/07c99/pressure"
+      json_attributes_template: >
+        {{ {"unit": value_json.unit, "time": value_json.time} | tojson }}
+      device:
+        identifiers: ["lcrelay_aranet4_07c99"]
+
+    - name: "Aquarium Aranet4 Battery"
+      unique_id: "lcrelay_aranet4_07c99_battery"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/aranet4/07c99/battery"
+      value_template: "{{ value_json.value }}"
+      unit_of_measurement: "%"
+      device_class: battery
+      state_class: measurement
+      json_attributes_topic: "flow/aquarium/lcrelay/8a23d8/aranet4/07c99/battery"
+      json_attributes_template: >
+        {{ {"unit": value_json.unit, "time": value_json.time} | tojson }}
+      device:
+        identifiers: ["lcrelay_aranet4_07c99"]
+
+    - name: "Aquarium Aranet4 RSSI"
+      unique_id: "lcrelay_aranet4_07c99_rssi"
+      state_topic: "flow/aquarium/lcrelay/8a23d8/aranet4/07c99/rssi"
+      value_template: "{{ value_json.value }}"
+      unit_of_measurement: "dBm"
+      device_class: signal_strength
+      state_class: measurement
+      json_attributes_topic: "flow/aquarium/lcrelay/8a23d8/aranet4/07c99/rssi"
+      json_attributes_template: >
+        {{ {"unit": value_json.unit, "time": value_json.time} | tojson }}
+      device:
+        identifiers: ["lcrelay_aranet4_07c99"]
+
+
+
+
 
   # ============================================================================
   # Relay Switches (4 channels)

@@ -1,0 +1,76 @@
+mqtt:
+  sensor:
+    - name: "Aranet4 07C0D CO2"
+      state_topic: "flow/aranet4/07c0d/telemetry"
+      value_template: "{{ value_json.co2 }}"
+      unit_of_measurement: "ppm"
+      device_class: carbon_dioxide
+      state_class: measurement
+      availability_topic: "flow/aranet4/07c0d/telemetry"
+      expire_after: 300
+      device:
+        identifiers: ["aranet4_07c0d"]
+        name: "Aranet4 07C0D"
+        model: "Aranet4"
+        manufacturer: "SAF Tehnika"
+
+    - name: "Aranet4 07C0D Temperature"
+      state_topic: "flow/aranet4/07c0d/telemetry"
+      value_template: "{{ value_json.temperature | round(2) }}"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      device:
+        identifiers: ["aranet4_07c0d"]
+
+    - name: "Aranet4 07C0D Humidity"
+      state_topic: "flow/aranet4/07c0d/telemetry"
+      value_template: "{{ value_json.humidity }}"
+      unit_of_measurement: "%"
+      device_class: humidity
+      state_class: measurement
+      device:
+        identifiers: ["aranet4_07c0d"]
+
+    - name: "Aranet4 07C0D Pressure"
+      state_topic: "flow/aranet4/07c0d/telemetry"
+      value_template: "{{ value_json.pressure }}"
+      unit_of_measurement: "hPa"
+      device_class: atmospheric_pressure
+      state_class: measurement
+      device:
+        identifiers: ["aranet4_07c0d"]
+
+    - name: "Aranet4 07C0D Battery"
+      state_topic: "flow/aranet4/07c0d/telemetry"
+      value_template: "{{ value_json.battery }}"
+      unit_of_measurement: "%"
+      device_class: battery
+      state_class: measurement
+      device:
+        identifiers: ["aranet4_07c0d"]
+
+    - name: "Aranet4 07C0D RSSI"
+      state_topic: "flow/aranet4/07c0d/telemetry"
+      value_template: "{{ value_json.rssi }}"
+      unit_of_measurement: "dBm"
+      device_class: signal_strength
+      state_class: measurement
+      device:
+        identifiers: ["aranet4_07c0d"]
+
+    - name: "Aranet4 07C0D Last Update"
+      state_topic: "flow/aranet4/07c0d/telemetry"
+      value_template: "{{ value_json.timestamp }}"
+      device_class: timestamp
+      device:
+        identifiers: ["aranet4_07c0d"]
+
+    - name: "Aranet4 07c0d Gateway"
+      unique_id: aranet4_07c0d_gateway
+      state_topic: "birb/Birb-7F98A4/telemetry"
+      icon: mdi:access-point
+      entity_category: diagnostic
+      value_template: "{{ value_json.gateway }}"
+      device:
+        identifiers: ["aranet4_07c0d"]
