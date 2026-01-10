@@ -1,0 +1,457 @@
+mqtt:
+
+  binary_sensor:
+    # ============================================================================
+    # Aranet Pro Base Station Availability Sensor
+    # ============================================================================
+    - name: "Aranet Pro Base Station"
+      icon: mdi:access-point
+      unique_id: aranet_pro_base_364190009546_binary
+      state_topic: "flow/aranetpro/364190009546/online"
+      payload_on: "true"
+      payload_off: "false"
+      device_class: connectivity
+      device:
+        identifiers:
+          - "aranet_pro_base_364190009546"
+
+    # Binary sensor for packet loss alarm
+    - name: "Packet Loss"
+      unique_id: aranet4_407C0D_packet_loss
+      state_topic: "flow/aranetpro/364190009546/sensors/407C0D/json/alarms"
+      value_template: "{{ 'ON' if 'packetsLost' in value_json else 'OFF' }}"
+      device_class: problem
+      icon: mdi:alert-circle
+      device:
+        identifiers:
+          - "aranet4_407C0D"
+
+    - name: "Packet Loss"
+      unique_id: aranet4_407C25_packet_loss
+      state_topic: "flow/aranetpro/364190009546/sensors/407C25/json/alarms"
+      value_template: "{{ 'ON' if 'packetsLost' in value_json else 'OFF' }}"
+      device_class: problem
+      icon: mdi:alert-circle
+      device:
+        identifiers:
+          - "aranet4_407C25"
+          
+    - name: "Packet Loss"
+      unique_id: aranet4_407C2E_packet_loss
+      state_topic: "flow/aranetpro/364190009546/sensors/407C2E/json/alarms"
+      value_template: "{{ 'ON' if 'packetsLost' in value_json else 'OFF' }}"
+      device_class: problem
+      icon: mdi:alert-circle
+      device:
+        identifiers:
+          - "aranet4_407C2E"
+
+    - name: "Packet Loss"
+      unique_id: aranet4_407C99_packet_loss
+      state_topic: "flow/aranetpro/364190009546/sensors/407C99/json/alarms"
+      value_template: "{{ 'ON' if 'packetsLost' in value_json else 'OFF' }}"
+      device_class: problem
+      icon: mdi:alert-circle
+      device:
+        identifiers:
+          - "aranet4_407C99"
+
+  sensor:
+  
+      # Base Station Online Status
+    - name: "Online Status"
+      unique_id: aranet_pro_base_364190009546_status
+      state_topic: "flow/aranetpro/364190009546/online"
+      value_template: "{{ 'Online' if value == 'true' else 'Offline' }}"
+      icon: mdi:access-point
+      device:
+        identifiers:
+          - "aranet_pro_base_364190009546"
+        name: "Aranet Pro Base Station"
+        manufacturer: "SAF Tehnika"
+        model: "Aranet Pro"
+        configuration_url: "http://192.168.178.99"
+
+    # Base Station Name
+    - name: "Name"
+      unique_id: aranet_pro_base_364190009546_name
+      state_topic: "flow/aranetpro/364190009546/name"
+      icon: mdi:label
+      device:
+        identifiers:
+          - "aranet_pro_base_364190009546"
+
+  
+  # ============================================
+  # Sensor 407C0D - "Essraum"
+  # ============================================
+    # CO2
+    - name: "CO2"
+      unique_id: aranet4_407C0D_co2
+      state_topic: "flow/aranetpro/364190009546/sensors/407C0D/json/measurements"
+      value_template: "{{ value_json.co2 }}"
+      unit_of_measurement: "ppm"
+      device_class: carbon_dioxide
+      state_class: measurement
+      icon: mdi:molecule-co2
+      device:
+        identifiers:
+          - "aranet4_407C0D"
+        name: "Aranet4 Essraum"
+        manufacturer: "SAF Tehnika"
+        model: "TDSPC003"
+        via_device: "aranet_pro_base_364190009546"
+
+    # Temperature
+    - name: "Temperature"
+      unique_id: aranet4_407C0D_temperature
+      state_topic: "flow/aranetpro/364190009546/sensors/407C0D/json/measurements"
+      value_template: "{{ value_json.temperature }}"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C0D"
+
+    # Humidity
+    - name: "Humidity"
+      unique_id: aranet4_407C0D_humidity
+      state_topic: "flow/aranetpro/364190009546/sensors/407C0D/json/measurements"
+      value_template: "{{ value_json.humidity }}"
+      unit_of_measurement: "%"
+      device_class: humidity
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C0D"
+
+    # Atmospheric Pressure
+    - name: "Atmospheric Pressure"
+      unique_id: aranet4_407C0D_pressure
+      state_topic: "flow/aranetpro/364190009546/sensors/407C0D/json/measurements"
+      value_template: "{{ (value_json.atmosphericpressure | float / 100) | round(1) }}"
+      unit_of_measurement: "hPa"
+      device_class: atmospheric_pressure
+      state_class: measurement
+      icon: mdi:gauge
+      device:
+        identifiers:
+          - "aranet4_407C0D"
+
+    # Battery
+    - name: "Battery"
+      unique_id: aranet4_407C0D_battery
+      state_topic: "flow/aranetpro/364190009546/sensors/407C0D/json/measurements"
+      value_template: "{{ ((value_json.battery | float / 3.0) * 100) | round(0) }}"
+      unit_of_measurement: "%"
+      device_class: battery
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C0D"
+
+    # Signal Strength (RSSI)
+    - name: "Signal Strength"
+      unique_id: aranet4_407C0D_rssi
+      state_topic: "flow/aranetpro/364190009546/sensors/407C0D/json/measurements"
+      value_template: "{{ value_json.rssi }}"
+      unit_of_measurement: "dBm"
+      device_class: signal_strength
+      state_class: measurement
+      icon: mdi:wifi-strength-2
+      device:
+        identifiers:
+          - "aranet4_407C0D"
+
+    # Last Update Time
+    - name: "Last Update"
+      unique_id: aranet4_407C0D_last_update
+      state_topic: "flow/aranetpro/364190009546/sensors/407C0D/json/measurements"
+      value_template: "{{ value_json.time | int | timestamp_local }}"
+      device_class: timestamp
+      icon: mdi:clock-outline
+      device:
+        identifiers:
+          - "aranet4_407C0D"
+
+  
+  # ============================================
+  # Sensor 407C25 Werkraum
+  # ============================================
+    # CO2
+    - name: "CO2"
+      unique_id: aranet4_407C25_co2
+      state_topic: "flow/aranetpro/364190009546/sensors/407C25/json/measurements"
+      value_template: "{{ value_json.co2 }}"
+      unit_of_measurement: "ppm"
+      device_class: carbon_dioxide
+      state_class: measurement
+      icon: mdi:molecule-co2
+      device:
+        identifiers:
+          - "aranet4_407C25"
+        name: "Aranet4 407C25 Werkraum"
+        manufacturer: "SAF Tehnika"
+        model: "TDSPC003"
+        via_device: "aranet_pro_base_364190009546"
+
+    # Temperature
+    - name: "Temperature"
+      unique_id: aranet4_407C25_temperature
+      state_topic: "flow/aranetpro/364190009546/sensors/407C25/json/measurements"
+      value_template: "{{ value_json.temperature }}"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C25"
+
+    # Humidity
+    - name: "Humidity"
+      unique_id: aranet4_407C25_humidity
+      state_topic: "flow/aranetpro/364190009546/sensors/407C25/json/measurements"
+      value_template: "{{ value_json.humidity }}"
+      unit_of_measurement: "%"
+      device_class: humidity
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C25"
+
+    # Atmospheric Pressure
+    - name: "Atmospheric Pressure"
+      unique_id: aranet4_407C25_pressure
+      state_topic: "flow/aranetpro/364190009546/sensors/407C25/json/measurements"
+      value_template: "{{ (value_json.atmosphericpressure | float / 100) | round(1) }}"
+      unit_of_measurement: "hPa"
+      device_class: atmospheric_pressure
+      state_class: measurement
+      icon: mdi:gauge
+      device:
+        identifiers:
+          - "aranet4_407C25"
+
+    # Battery
+    - name: "Battery"
+      unique_id: aranet4_407C25_battery
+      state_topic: "flow/aranetpro/364190009546/sensors/407C25/json/measurements"
+      value_template: "{{ ((value_json.battery | float / 3.0) * 100) | round(0) }}"
+      unit_of_measurement: "%"
+      device_class: battery
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C25"
+
+    # Signal Strength (RSSI)
+    - name: "Signal Strength"
+      unique_id: aranet4_407C25_rssi
+      state_topic: "flow/aranetpro/364190009546/sensors/407C25/json/measurements"
+      value_template: "{{ value_json.rssi }}"
+      unit_of_measurement: "dBm"
+      device_class: signal_strength
+      state_class: measurement
+      icon: mdi:wifi-strength-2
+      device:
+        identifiers:
+          - "aranet4_407C25"
+
+    # Last Update Time
+    - name: "Last Update"
+      unique_id: aranet4_407C25_last_update
+      state_topic: "flow/aranetpro/364190009546/sensors/407C25/json/measurements"
+      value_template: "{{ value_json.time | int | timestamp_local }}"
+      device_class: timestamp
+      icon: mdi:clock-outline
+      device:
+        identifiers:
+          - "aranet4_407C25"
+  
+  # ============================================
+  # Sensor 407C2E - "Spare"
+  # ============================================
+    # CO2
+    - name: "CO2"
+      unique_id: aranet4_407C2E_co2
+      state_topic: "flow/aranetpro/364190009546/sensors/407C2E/json/measurements"
+      value_template: "{{ value_json.co2 }}"
+      unit_of_measurement: "ppm"
+      device_class: carbon_dioxide
+      state_class: measurement
+      icon: mdi:molecule-co2
+      device:
+        identifiers:
+          - "aranet4_407C2E Spare"
+        name: "Aranet4 407C2E Spare"
+        manufacturer: "SAF Tehnika"
+        model: "TDSPC003"
+        via_device: "aranet_pro_base_364190009546"
+
+    # Temperature
+    - name: "Temperature"
+      unique_id: aranet4_407C2E_temperature
+      state_topic: "flow/aranetpro/364190009546/sensors/407C2E/json/measurements"
+      value_template: "{{ value_json.temperature }}"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C2E"
+
+    # Humidity
+    - name: "Humidity"
+      unique_id: aranet4_407C2E_humidity
+      state_topic: "flow/aranetpro/364190009546/sensors/407C2E/json/measurements"
+      value_template: "{{ value_json.humidity }}"
+      unit_of_measurement: "%"
+      device_class: humidity
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C2E"
+
+    # Atmospheric Pressure
+    - name: "Atmospheric Pressure"
+      unique_id: aranet4_407C2E_pressure
+      state_topic: "flow/aranetpro/364190009546/sensors/407C2E/json/measurements"
+      value_template: "{{ (value_json.atmosphericpressure | float / 100) | round(1) }}"
+      unit_of_measurement: "hPa"
+      device_class: atmospheric_pressure
+      state_class: measurement
+      icon: mdi:gauge
+      device:
+        identifiers:
+          - "aranet4_407C2E"
+
+    # Battery
+    - name: "Battery"
+      unique_id: aranet4_407C2E_battery
+      state_topic: "flow/aranetpro/364190009546/sensors/407C2E/json/measurements"
+      value_template: "{{ ((value_json.battery | float / 3.0) * 100) | round(0) }}"
+      unit_of_measurement: "%"
+      device_class: battery
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C2E"
+
+    # Signal Strength (RSSI)
+    - name: "Signal Strength"
+      unique_id: aranet4_407C2E_rssi
+      state_topic: "flow/aranetpro/364190009546/sensors/407C2E/json/measurements"
+      value_template: "{{ value_json.rssi }}"
+      unit_of_measurement: "dBm"
+      device_class: signal_strength
+      state_class: measurement
+      icon: mdi:wifi-strength-2
+      device:
+        identifiers:
+          - "aranet4_407C2E"
+
+    # Last Update Time
+    - name: "Last Update"
+      unique_id: aranet4_407C2E_last_update
+      state_topic: "flow/aranetpro/364190009546/sensors/407C2E/json/measurements"
+      value_template: "{{ value_json.time | int | timestamp_local }}"
+      device_class: timestamp
+      icon: mdi:clock-outline
+      device:
+        identifiers:
+          - "aranet4_407C2E"
+
+
+  # ============================================
+  # Sensor 407C99
+  # ============================================
+    # CO2
+    - name: "CO2"
+      unique_id: aranet4_407C99_co2
+      state_topic: "flow/aranetpro/364190009546/sensors/407C99/json/measurements"
+      value_template: "{{ value_json.co2 }}"
+      unit_of_measurement: "ppm"
+      device_class: carbon_dioxide
+      state_class: measurement
+      icon: mdi:molecule-co2
+      device:
+        identifiers:
+          - "aranet4_407C99"
+        name: "Aranet4 407C99 Aquarium"
+        manufacturer: "SAF Tehnika"
+        model: "TDSPC003"
+        via_device: "aranet_pro_base_364190009546"
+
+    # Temperature
+    - name: "Temperature"
+      unique_id: aranet4_407C99_temperature
+      state_topic: "flow/aranetpro/364190009546/sensors/407C99/json/measurements"
+      value_template: "{{ value_json.temperature }}"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C99"
+
+    # Humidity
+    - name: "Humidity"
+      unique_id: aranet4_407C99_humidity
+      state_topic: "flow/aranetpro/364190009546/sensors/407C99/json/measurements"
+      value_template: "{{ value_json.humidity }}"
+      unit_of_measurement: "%"
+      device_class: humidity
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C99"
+
+    # Atmospheric Pressure
+    - name: "Atmospheric Pressure"
+      unique_id: aranet4_407C99_pressure
+      state_topic: "flow/aranetpro/364190009546/sensors/407C99/json/measurements"
+      value_template: "{{ (value_json.atmosphericpressure | float / 100) | round(1) }}"
+      unit_of_measurement: "hPa"
+      device_class: atmospheric_pressure
+      state_class: measurement
+      icon: mdi:gauge
+      device:
+        identifiers:
+          - "aranet4_407C99"
+
+    # Battery
+    - name: "Battery"
+      unique_id: aranet4_407C99_battery
+      state_topic: "flow/aranetpro/364190009546/sensors/407C99/json/measurements"
+      value_template: "{{ ((value_json.battery | float / 3.0) * 100) | round(0) }}"
+      unit_of_measurement: "%"
+      device_class: battery
+      state_class: measurement
+      device:
+        identifiers:
+          - "aranet4_407C99"
+
+    # Signal Strength (RSSI)
+    - name: "Signal Strength"
+      unique_id: aranet4_407C99_rssi
+      state_topic: "flow/aranetpro/364190009546/sensors/407C99/json/measurements"
+      value_template: "{{ value_json.rssi }}"
+      unit_of_measurement: "dBm"
+      device_class: signal_strength
+      state_class: measurement
+      icon: mdi:wifi-strength-2
+      device:
+        identifiers:
+          - "aranet4_407C99"
+
+    # Last Update Time
+    - name: "Last Update"
+      unique_id: aranet4_407C99_last_update
+      state_topic: "flow/aranetpro/364190009546/sensors/407C99/json/measurements"
+      value_template: "{{ value_json.time | int | timestamp_local }}"
+      device_class: timestamp
+      icon: mdi:clock-outline
+      device:
+        identifiers:
+          - "aranet4_407C99"
