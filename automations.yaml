@@ -1,21 +1,3 @@
-- id: '1763642941551'
-  alias: CO2
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - sensor.aranet4_407c0d_aranet4_407c0d_co2
-  conditions:
-  - condition: template
-    value_template: '{{ trigger.to_state.state not in [''unknown'', ''unavailable'']
-      }}'
-  actions:
-  - action: number.set_value
-    target:
-      entity_id: number.birb_7fb0d8_co2_display
-    data:
-      value: '{{ trigger.to_state.state | float }}'
-  mode: single
 - id: '1765060726911'
   alias: CO2 800 lcrelay 1 on
   description: ''
@@ -47,57 +29,4 @@
     data: {}
     target:
       entity_id: switch.aquarium_8a23d8_relay_1
-  mode: single
-- id: '1765228312412'
-  alias: Set home CO2
-  description: ''
-  triggers:
-  - entity_id: sensor.aranet4_boaz_2bfd5_carbon_dioxide
-    trigger: state
-  conditions:
-  - condition: template
-    value_template: '{{ states(''sensor.aranet4_boaz_2bfd5_carbon_dioxide'') not in
-      [''unknown'',''unavailable'',''none'',''''] }}
-
-      '
-  actions:
-  - target:
-      entity_id: number.birb_7F98A4_co2_display
-    data:
-      value: '{{ states(''sensor.aranet4_boaz_2bfd5_carbon_dioxide'') | float(0) }}'
-    action: number.set_value
-  mode: single
-- id: '1767363122633'
-  alias: Birb-7FB0D8 - Track telemetry arrival (JSON only, trigger-filtered)
-  triggers:
-  - topic: birb/telemetry/Birb-7FB0D8
-    value_template: "{% set j = value | from_json(default={}) %} {{ j.device == 'Birb-7FB0D8'\n
-      \  and j.timestamp is defined\n   and j.co2 is defined\n   and j.battery_pct
-      is defined }}\n"
-    trigger: mqtt
-  actions:
-  - target:
-      entity_id: input_datetime.birb_7fb0d8_last_telemetry
-    data:
-      timestamp: '{{ now().timestamp() }}'
-    action: input_datetime.set_datetime
-  - target:
-      entity_id: counter.birb_7fb0d8_telemetry_count
-    action: counter.increment
-    data: {}
-  mode: queued
-- id: '1767368183498'
-  alias: Birb-7FB0D8 - Alert if telemetry missing
-  description: ''
-  triggers:
-  - entity_id: sensor.birb_7fb0d8_telemetry_age
-    above: 90
-    for: 00:00:30
-    trigger: numeric_state
-  actions:
-  - data:
-      title: Birb telemetry missing
-      message: 'No telemetry from Birb-7FB0D8 for >90s (now: {{ states(''sensor.birb_7fb0d8_telemetry_age'')
-        }}s).'
-    action: notify.persistent_notification
   mode: single

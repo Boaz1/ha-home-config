@@ -27,7 +27,6 @@ mqtt:
         identifiers: ["birb_7fb0d8"]
         name: "Birb 7FB0D8"
         manufacturer: "Boaz"
-        model: "Birb v1.0.0.b27"
 
   sensor:
     # Raw telemetry container (stores full JSON as attributes)
@@ -45,14 +44,21 @@ mqtt:
       state_topic: "flow/birb/7FB0D8/telemetry"
       unit_of_measurement: "ppm"
       device_class: carbon_dioxide
-      value_template: "{{ value_json.co2 | int(0) }}"
+      value_template: "{{ value_json.co2 | int }}"
+      device:
+        identifiers: ["birb_7fb0d8"]
+
+    - name: "Birb 7FB0D8 CO2 source"
+      unique_id: birb_7fb0d8_co2_source
+      state_topic: "flow/birb/7FB0D8/telemetry"
+      value_template: "{{ value_json.co2_source | default('unknown') }}"
       device:
         identifiers: ["birb_7fb0d8"]
 
     - name: "Birb 7FB0D8 Battery Percent"
       unique_id: birb_7fb0d8_battery_percent
       state_topic: "flow/birb/7FB0D8/telemetry"
-      value_template: "{{ value_json.battery_pct | float(0) }}"
+      value_template: "{{ value_json.battery_pct | float }}"
       unit_of_measurement: "%"
       device_class: battery
       state_class: measurement
@@ -63,7 +69,7 @@ mqtt:
     - name: "Birb 7FB0D8 Battery Voltage"
       unique_id: birb_7fb0d8_battery_voltage
       state_topic: "flow/birb/7FB0D8/telemetry"
-      value_template: "{{ value_json.battery_v | float(0) }}"
+      value_template: "{{ value_json.battery_v | float }}"
       unit_of_measurement: "V"
       device_class: voltage
       state_class: measurement
@@ -73,7 +79,7 @@ mqtt:
     - name: "Birb 7FB0D8 Servo Position"
       unique_id: birb_7fb0d8_servo_position
       state_topic: "flow/birb/7FB0D8/telemetry"
-      value_template: "{{ value_json.servo | int(0) }}"
+      value_template: "{{ value_json.servo | int }}"
       unit_of_measurement: "°"
       state_class: measurement
       device:
@@ -84,14 +90,14 @@ mqtt:
       state_topic: "flow/birb/7FB0D8/telemetry"
       unit_of_measurement: "dBm"
       device_class: signal_strength
-      value_template: "{{ value_json.rssi | int(0) }}"
+      value_template: "{{ value_json.rssi | int }}"
       device:
         identifiers: ["birb_7fb0d8"]
 
     - name: "Birb 7FB0D8 Boot Count"
       unique_id: birb_7fb0d8_boot
       state_topic: "flow/birb/7FB0D8/telemetry"
-      value_template: "{{ value_json.boot | int(0) }}"
+      value_template: "{{ value_json.boot | int }}"
       device:
         identifiers: ["birb_7fb0d8"]
 
@@ -105,7 +111,7 @@ mqtt:
     - name: "Birb 7FB0D8 IP"
       unique_id: birb_7fb0d8_ip
       state_topic: "flow/birb/7FB0D8/telemetry"
-      value_template: "{{ value_json.ip | default('') }}"
+      value_template: "{{ value_json.ip | default('unknown') }}"
       device:
         identifiers: ["birb_7fb0d8"]
 
@@ -118,7 +124,7 @@ mqtt:
 
     - name: "Birb 7FB0D8 Last Seen"
       state_topic: "flow/birb/7FB0D8/telemetry"
-      value_template: "{{ value_json.timestamp }}"
+      value_template: "{{ value_json.timestamp | default('unknown') }}"
       device_class: timestamp
       device:
         identifiers: ["birb_7fb0d8"]
@@ -141,4 +147,52 @@ template:
             false
           {% endif %}
 
+  - trigger:
+      - platform: time_pattern
+        seconds: "/10"   # update every 10 seconds (adjust if you want)
+    sensor:
+      - name: "Birb 7FB0D8 telemetry age"
+        unit_of_measurement: "s"
+        state: >
+          {% set t = states('input_datetime.birb_7fb0d8_last_telemetry') %}
+          {% if t in ['unknown', 'unavailable', 'none', ''] %}
+            unknown
+          {% else %}
+            {{ (as_timestamp(now()) - as_timestamp(t)) | int }}
+          {% endif %}
+
+input_datetime:
+  birb_7fb0d8_last_telemetry:
+    name: Birb 7FB0D8 last telemetry
+    has_date: true
+    has_time: true
+
+counter:
+  birb_7fb0d8_telemetry_count:
+    name: Birb 7FB0D8 telemetry count
+    initial: 0
+    step: 1
+
+automation:
+  - alias: Birb-7FB0D8 - Track telemetry arrival
+    mode: queued
+
+    trigger:
+      - platform: mqtt
+        topic: flow/birb/7FB0D8/telemetry
+        value_template: >
+          {% set j = value | from_json(default={}) %}
+          {{ j.timestamp is defined
+             and j.co2 is defined }}
+
+    action:
+      - service: input_datetime.set_datetime
+        target:
+          entity_id: input_datetime.birb_7fb0d8_last_telemetry
+        data:
+          timestamp: "{{ now().timestamp() }}"
+
+      - service: counter.increment
+        target:
+          entity_id: counter.birb_7fb0d8_telemetry_count
 
