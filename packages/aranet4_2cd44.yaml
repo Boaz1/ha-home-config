@@ -5,6 +5,7 @@ mqtt:
       state_topic: "flow/aranet4/2cd44/telemetry"
       value_template: "{{ value_json.co2 | int }}"
       unit_of_measurement: "ppm"
+      expire_after: 300
       device_class: carbon_dioxide
       state_class: measurement
       device:
@@ -15,6 +16,7 @@ mqtt:
       state_topic: "flow/aranet4/2cd44/telemetry"
       value_template: "{{ value_json.temperature | round(2) }}"
       unit_of_measurement: "°C"
+      expire_after: 300
       device_class: temperature
       state_class: measurement
       device:
@@ -25,6 +27,7 @@ mqtt:
       state_topic: "flow/aranet4/2cd44/telemetry"
       value_template: "{{ value_json.humidity }}"
       unit_of_measurement: "%"
+      expire_after: 300
       device_class: humidity
       state_class: measurement
       device:
@@ -35,6 +38,7 @@ mqtt:
       state_topic: "flow/aranet4/2cd44/telemetry"
       value_template: "{{ value_json.pressure }}"
       unit_of_measurement: "hPa"
+      expire_after: 300
       device_class: atmospheric_pressure
       state_class: measurement
       device:
@@ -45,6 +49,7 @@ mqtt:
       state_topic: "flow/aranet4/2cd44/telemetry"
       value_template: "{{ value_json.battery }}"
       unit_of_measurement: "%"
+      expire_after: 300
       device_class: battery
       state_class: measurement
       device:
@@ -55,6 +60,7 @@ mqtt:
       state_topic: "flow/aranet4/2cd44/telemetry"
       value_template: "{{ value_json.rssi }}"
       unit_of_measurement: "dBm"
+      expire_after: 300
       device_class: signal_strength
       state_class: measurement
       device:
@@ -74,8 +80,9 @@ mqtt:
       icon: mdi:access-point
       entity_category: diagnostic
       value_template: "{{ value_json.gateway }}"
+      expire_after: 300
       device:
         identifiers: ["birb_aranet4_2cd44"]
-        name: "Birb Aranet4 2cd44"
+        name: "Birb Aranet4 2cd44 Ruby"
         model: "Birb Aranet4"
         manufacturer: "Boaz"
