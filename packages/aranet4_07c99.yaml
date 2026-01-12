@@ -1,0 +1,81 @@
+mqtt:
+  sensor:
+    - name: "Birb Aranet4 07c99 CO2"
+      unique_id: birb_aranet4_07c99_co2
+      state_topic: "flow/aranet4/07c99/telemetry"
+      value_template: "{{ value_json.co2 | int }}"
+      unit_of_measurement: "ppm"
+      device_class: carbon_dioxide
+      state_class: measurement
+      device:
+        identifiers: ["birb_aranet4_07c99"]
+
+    - name: "Birb Aranet4 07c99 Temperature"
+      unique_id: birb_aranet4_07c99_temperature
+      state_topic: "flow/aranet4/07c99/telemetry"
+      value_template: "{{ value_json.temperature | round(2) }}"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      device:
+        identifiers: ["birb_aranet4_07c99"]
+
+    - name: "Birb Aranet4 07c99 Humidity"
+      unique_id: birb_aranet4_07c99_humidity
+      state_topic: "flow/aranet4/07c99/telemetry"
+      value_template: "{{ value_json.humidity }}"
+      unit_of_measurement: "%"
+      device_class: humidity
+      state_class: measurement
+      device:
+        identifiers: ["birb_aranet4_07c99"]
+
+    - name: "Birb Aranet4 07c99 Pressure"
+      unique_id: birb_aranet4_07c99_temperature
+      state_topic: "flow/aranet4/07c99/telemetry"
+      value_template: "{{ value_json.pressure }}"
+      unit_of_measurement: "hPa"
+      device_class: atmospheric_pressure
+      state_class: measurement
+      device:
+        identifiers: ["birb_aranet4_07c99"]
+
+    - name: "Birb Aranet4 07c99 Battery"
+      unique_id: birb_aranet4_07c99_battery
+      state_topic: "flow/aranet4/07c99/telemetry"
+      value_template: "{{ value_json.battery }}"
+      unit_of_measurement: "%"
+      device_class: battery
+      state_class: measurement
+      device:
+        identifiers: ["birb_aranet4_07c99"]
+
+    - name: "Birb Aranet4 07c99 RSSI"
+      unique_id: birb_aranet4_07c99_rssi
+      state_topic: "flow/aranet4/07c99/telemetry"
+      value_template: "{{ value_json.rssi }}"
+      unit_of_measurement: "dBm"
+      device_class: signal_strength
+      state_class: measurement
+      device:
+        identifiers: ["birb_aranet4_07c99"]
+
+    - name: "Birb Aranet4 07c99 Last Update"
+      unique_id: birb_aranet4_07c99_last_update
+      state_topic: "flow/aranet4/07c99/telemetry"
+      value_template: "{{ value_json.timestamp }}"
+      device_class: timestamp
+      device:
+        identifiers: ["birb_aranet4_07c99"]
+
+    - name: "Birb Aranet4 07c99 Gateway"
+      unique_id: birb_aranet4_07c99_gateway
+      state_topic: "birb/Birb-7F98A4/telemetry"
+      icon: mdi:access-point
+      entity_category: diagnostic
+      value_template: "{{ value_json.gateway }}"
+      device:
+        identifiers: ["birb_aranet4_07c99"]
+        name: "Birb Aranet4 07c99"
+        model: "Birb Aranet4"
+        manufacturer: "Boaz"
